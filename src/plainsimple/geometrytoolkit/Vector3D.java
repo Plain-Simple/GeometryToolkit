@@ -1,7 +1,5 @@
 package plainsimple.geometrytoolkit;
 
-import java.util.Vector;
-
 public class Vector3D {
     private double x;
     private double y;
@@ -32,6 +30,10 @@ public class Vector3D {
     }
     public void setName(String new_name) {
         name = new_name;
+    }
+    /* returns name of vector */
+    public String getName() {
+        return name;
     }
     /* returns String representation of the vector */
     public String getVectorAsString() {
@@ -71,6 +73,13 @@ public class Vector3D {
     public double dot(Vector3D vector_2) {
         return x * vector_2.getX() + y * vector_2.getY() + z * vector_2.getZ();
     }
+    /* returns cross product of vector and vector_2 */
+    public Vector3D cross(Vector3D vector_2) {
+        double cross_x = y * vector_2.getZ() - z * vector_2.getY();
+        double cross_y = z * vector_2.getX() - x * vector_2.getZ();
+        double cross_z = x * vector_2.getY() - y * vector_2.getX();
+        return new Vector3D(cross_x, cross_y, cross_z);
+    }
     /* returns magnitude of vector */
     public double getMagnitude() {
         Vector3D this_vector = new Vector3D(x, y, z);
@@ -92,5 +101,9 @@ public class Vector3D {
     public boolean isPerpendicular(Vector3D vector_2) {
         Vector3D this_vector = new Vector3D(x, y, z);
         return (this_vector.dot(vector_2) == 0);
+    }
+    /* returns whether this vector is equal */
+    public boolean equals(Vector3D vector_2) {
+        return (x == vector_2.getX() && y == vector_2.getY() && z == vector_2.getZ());
     }
 }
