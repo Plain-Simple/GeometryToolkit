@@ -26,6 +26,10 @@ public class Vector2D {
     public void setName(String new_name) {
         name = new_name;
     }
+    /* returns name of vector */
+    public String getName() {
+        return name;
+    }
     /* returns String representation of the vector */
     public String getVectorAsString() {
         return "<" + x + ", " + y + ">";
