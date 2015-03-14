@@ -36,7 +36,7 @@ public class Vector3D {
     return name;
   }
   /* returns String representation of the vector */
-  public String getVectorAsString() {
+  public String getComponentForm() {
     return "<" + x + ", " + y + ", " + z + ">";
   }
   /* returns x value of vector */
