@@ -10,10 +10,10 @@ public interface Messages {
   @En("Waiting on command...")
   String command_waiting();
 
-  @En("Vector")
+  @En("Vector ")
   String vector();
 
-  @En("created")
+  @En(" created")
   String created();
 
   @En("Error occurred")
@@ -69,4 +69,38 @@ public interface Messages {
 
     @En(" was not recognized")
     String not_recognized();
+
+    @En(" - ")
+    String minus_sign();
+
+    @En(" + ")
+    String plus_sign();
+
+    @En(" * ")
+    String multiply_sign();
+
+    @En(" function cannot be performed. ")
+    String cant_do_function();
+
+    @En(" must be of type ")
+    String must_be_type();
+
+    @En(" double")
+    String type_double();
+
+    @En(" int")
+    String type_int();
+
+    @En("3D")
+    String three_d();
+
+    @En(" or ")
+    String or();
+
+    @En(" / ")
+    String divide_sign();
+
+    @En("Error creating object ")
+    String error_creating_object();
+
 }
