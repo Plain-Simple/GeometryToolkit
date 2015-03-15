@@ -15,13 +15,8 @@ class CLI {
     /* regex pattern used to parse user input */
   private Pattern user_command_pattern =
     Pattern.compile("([^\\s\"\']+)|\"([^\"]*)\"|\'([^\']*)\'");
-  public static void main(String args[]) {
-    /* required for i18n */
-    C10N.configure(new DefaultC10NAnnotations());
-    CLI cli = new CLI();
-    cli.startCLI();
-  }
-    private void startCLI() {
+
+    public void startCLI() {
     Println(msg.program_full_name());
     String user_input;
     do {
