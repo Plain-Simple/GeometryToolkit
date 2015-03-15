@@ -111,19 +111,20 @@ class CLI {
   private Vector3D constructVector3D(String name, String args, boolean add_to_list) {
       /* syntax is "<x, y, z>" */
       ArrayList<Double> coordinates = new ArrayList<>();
-      Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\W*");
+      Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\D*");
       Matcher matcher = parse_vector.matcher(args);
       try {
           while (matcher.find()) {
-              coordinates.add(Double.parseDouble(matcher.group()));
-
+              Println("matcher = " + matcher.group(1));
+              coordinates.add(Double.parseDouble(matcher.group(1)));
           }
           Vector3D new_vector3d = new Vector3D(name);
           new_vector3d.setCoordinates(coordinates.get(0), coordinates.get(1), coordinates.get(2));
-          Println(msg.vector() + " " + new_vector3d.getName() + " " + msg.created() + ": "
-                  + new_vector3d.getComponentForm());
-          if(add_to_list)
+          if(add_to_list) {
+              Println(msg.vector() + msg.double_quote() + new_vector3d.getName() + msg.double_quote()
+                      + msg.created() + ": " + new_vector3d.getComponentForm());
               user_objects.put(new_vector3d.getName(), new_vector3d);
+          }
           return new_vector3d;
       }catch(Exception e) {
           Println(msg.generic_error());
@@ -135,8 +136,10 @@ class CLI {
       /* account for possibility that user has entered |vector| */
       if(object_name.startsWith("|") && object_name.endsWith("|"))
           object_name.substring(1, object_name.length() - 1);
-      else if(object_name.startsWith("<") && object_name.endsWith(">"))
-          return(constructVector3D("", object_name, false));
+      else if(object_name.startsWith("<") && object_name.endsWith(">")) {
+          Println("Vector3D detected");
+          return (constructVector3D("", object_name, false));
+      }
     try {
         Object object = user_objects.get(object_name);
         return object;
@@ -162,10 +165,12 @@ class CLI {
   private Object handleVector3D(Vector3D vector_1, ArrayList<String> args, boolean constructor) {
       /* if constructor == true, need to pass a Vector3D object. Otherwise pass String */
   // todo: try-catch IllegalArgumentException
-    if(args.size() == 1) { /* syntax is <Objectname> */
+      if(args.size() == 0)
+          return vector_1;
+    else if(args.size() == 1) { /* syntax is <Objectname> */
         if(constructor) {
             try {
-                Vector3D vector_2 = (Vector3D) user_objects.get(args.get(0));
+                Vector3D vector_2 = (Vector3D) getObject(args.get(0));
                 return vector_2;
             }catch(NullPointerException e) {
                 /* return Error: "args.get(0)" is not defined */
