@@ -68,10 +68,10 @@ class CLI {
         if(arguments.contains("=")) {
             ArrayList<String> constructor_args = new ArrayList<>();
             /* collect constructor args in new list */
-            for(int i = arguments.indexOf("="); i < arguments.size(); i++) {
+            for(int i = arguments.indexOf("=") + 1; i < arguments.size(); i++) {
                 constructor_args.add(arguments.get(i));
             }
-            Object object_2 = getObject(constructor_args.get(3));
+            Object object_2 = getObject(constructor_args.get(0));
             if(object_2 == null) {
                 /* print error message: "Variable <name> does not exist or constructor is invalid" */
                 Println(msg.variable() + msg.double_quote() + constructor_args.get(0) + msg.double_quote() +
@@ -113,27 +113,35 @@ class CLI {
     }
     return arguments;
   }
-  private boolean constructVector3D(String name, ArrayList<String> args) {
-    try {
-      Vector3D new_vector3d = new Vector3D(name);
-      double x = Double.parseDouble(args.get(0));
-      double y = Double.parseDouble(args.get(1));
-      double z = Double.parseDouble(args.get(2));
-      new_vector3d.setCoordinates(x, y, z);
-      user_objects.put(new_vector3d.getName(), new_vector3d);
-      Println(msg.vector() + " " + new_vector3d.getName() + " " + msg.created() + ": "
-              + new_vector3d.getComponentForm());
-      return true;
-    } catch(Exception e) {
-      Println(msg.generic_error());
-      return false;
-    }
+  private Vector3D constructVector3D(String name, String args, boolean add_to_list) {
+      /* syntax is "<x, y, z>" */
+      ArrayList<Double> coordinates = new ArrayList<>();
+      Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\W*");
+      Matcher matcher = parse_vector.matcher(args);
+      try {
+          while (matcher.find()) {
+              coordinates.add(Double.parseDouble(matcher.group()));
+
+          }
+          Vector3D new_vector3d = new Vector3D(name);
+          new_vector3d.setCoordinates(coordinates.get(0), coordinates.get(1), coordinates.get(2));
+          Println(msg.vector() + " " + new_vector3d.getName() + " " + msg.created() + ": "
+                  + new_vector3d.getComponentForm());
+          if(add_to_list)
+              user_objects.put(new_vector3d.getName(), new_vector3d);
+          return new_vector3d;
+      }catch(Exception e) {
+          Println(msg.generic_error());
+          return null;
+      }
   }
   /* looks for object in arraylist, returns if found */
   public Object getObject(String object_name) {
       /* account for possibility that user has entered |vector| */
       if(object_name.startsWith("|") && object_name.endsWith("|"))
           object_name.substring(1, object_name.length() - 1);
+      else if(object_name.startsWith("<") && object_name.endsWith(">"))
+          return(constructVector3D("", object_name, false));
     try {
         Object object = user_objects.get(object_name);
         return object;
