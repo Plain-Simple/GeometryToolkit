@@ -35,6 +35,7 @@ class CLI {
   }
   private void processInput(String user_input) {
     ArrayList<String> arguments = parseInput(user_input);
+      Println("Debugging: arguments are " + arguments.toString());
     switch(arguments.get(0)) {
     case "help": // todo: help function (0.2)
       break;
@@ -45,18 +46,14 @@ class CLI {
           Object referenced_object = user_objects.get(arguments.get(0));
           /* get class of object so it can be converted to proper object */
           Class object_class = referenced_object.getClass();
-          Object returned_object;
+          Object returned_object = msg.generic_error(); /* temporary */
           if(object_class.equals(Vector3D.class)) { /* argument is a Vector3D */
-              Vector3D referenced_vector3d = (Vector3D) referenced_object;
+              Vector3D referenced_vector3d = getVector3D(referenced_object);
               returned_object = handleVector3D(referenced_vector3d, arguments, false);
-              if(returned_object.getClass().equals(Vector3D.class)) { // should never happen
-                  Vector3D v = (Vector3D) returned_object;
-                  Println(v.getComponentForm());
-              } else if(returned_object.getClass().equals(String.class))
-                  Println((String) returned_object);
           } else if(object_class.equals(Vector2D.class)) {
               Vector2D vector_1 = (Vector2D) referenced_object;
           }
+          Println((String) returned_object);
       }catch(NullPointerException e) {
       /* object not found - either a constructor or a user-error */
         /* command syntax: <Objectname> = constructor */
@@ -66,6 +63,7 @@ class CLI {
             for(int i = arguments.indexOf("=") + 1; i < arguments.size(); i++) {
                 constructor_args.add(arguments.get(i));
             }
+            Println("Constructor detected: " + constructor_args.toString());
             Object object_2 = getObject(constructor_args.get(0));
             if(object_2 == null) {
                 /* print error message: "Variable <name> does not exist or constructor is invalid" */
@@ -77,6 +75,7 @@ class CLI {
                 Object returned_object = handleVector3D(vector3d_2, constructor_args, true);
                 if(returned_object.getClass().equals(Vector3D.class)) {/* Vector3D created successfully */
                     Vector3D new_vector3d = getVector3D(returned_object);
+                    new_vector3d.setName(arguments.get(0));
                     Println(msg.vector() + msg.double_quote() + new_vector3d.getName() + msg.double_quote() +
                         msg.created() + new_vector3d.getComponentForm());
                     user_objects.put(new_vector3d.getName(), new_vector3d);
@@ -115,7 +114,6 @@ class CLI {
       Matcher matcher = parse_vector.matcher(args);
       try {
           while (matcher.find()) {
-              Println("matcher = " + matcher.group(1));
               coordinates.add(Double.parseDouble(matcher.group(1)));
           }
           Vector3D new_vector3d = new Vector3D(name);
@@ -192,7 +190,7 @@ class CLI {
         String operator = args.get(1);
         switch (operator) {
             case "+": /* vector addition */
-                Vector3D vector_2 = getVector3D(args.get(2));
+                Vector3D vector_2 = getVector3D(getObject(args.get(2)));
                 if(constructor)
                     return vector_1.addVector(vector_2);
                 else
@@ -200,7 +198,7 @@ class CLI {
                             vector_2.getComponentForm() + msg.equal_sign() +
                             vector_1.addVector(vector_2).getComponentForm();
             case "-": /* vector subtraction */
-                vector_2 = getVector3D(args.get(2));
+                vector_2 = getVector3D(getObject(args.get(2)));
                 if(constructor)
                     return vector_1.addVector(vector_2.multiplyScalar(-1));
                 else
