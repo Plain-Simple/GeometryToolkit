@@ -1,5 +1,9 @@
 package plainsimple.geometrytoolkit;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Vector3D {
   private double x;
   private double y;
@@ -23,6 +27,22 @@ public class Vector3D {
     z = 0.0;
     this.name = name;
   }
+    /* constructs Vector3D give String "<x,y,z>" */
+    public Vector3D constructFromString(String name, String args) {
+        ArrayList<Double> coordinates = new ArrayList<>();
+        Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\D*");
+        Matcher matcher = parse_vector.matcher(args);
+        try {
+            while (matcher.find()) {
+                coordinates.add(Double.parseDouble(matcher.group(1)));
+            }
+            Vector3D new_vector3d = new Vector3D(name);
+            new_vector3d.setCoordinates(coordinates.get(0), coordinates.get(1), coordinates.get(2));
+            return  new_vector3d;
+        }catch(Exception e) {
+            return null;
+        }
+    }
   public void setCoordinates(double x_coord, double y_coord, double z_coord) {
     x = x_coord;
     y = y_coord;
