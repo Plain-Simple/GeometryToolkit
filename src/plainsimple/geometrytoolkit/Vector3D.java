@@ -27,6 +27,19 @@ public class Vector3D {
     z = 0.0;
     this.name = name;
   }
+    /* constructs vector from point_1 to point_2 */
+    public Vector3D(Point3D point_1, Point3D point_2) {
+        x = point_2.getX() - point_1.getX();
+        y = point_2.getY() - point_1.getY();
+        z = point_2.getZ() - point_1.getZ();
+    }
+    /* constructs vector perpendicular to plane */
+    public Vector3D(Plane3D plane) {
+        /* will have component form <a, b, c> */
+        x = plane.getA();
+        y = plane.getB();
+        z = plane.getC();
+    }
     /* constructs Vector3D give String "<x,y,z>" */
     public Vector3D constructFromString(String name, String args) {
         ArrayList<Double> coordinates = new ArrayList<>();
@@ -107,8 +120,7 @@ public class Vector3D {
     return Math.sqrt(this_vector.dot(this_vector));
   }
   /* returns angle between two vectors */
-  public double getAngle(Vector3D
-                         vector_2) { // ToDo: angle class?? Also make sure vectors are tail-to-tail
+  public double getAngle(Vector3D vector_2) { // ToDo: angle class??
     Vector3D this_vector = new Vector3D(x, y,
                                         z); // todo: any way to refer to this vector directly?
     double  numerator = this_vector.dot(vector_2);
@@ -129,4 +141,12 @@ public class Vector3D {
   public boolean equals(Vector3D vector_2) {
     return (x == vector_2.getX() && y == vector_2.getY() && z == vector_2.getZ());
   }
+    /* returns vector projected onto vector_2 */
+    public Vector3D getProjection(Vector3D vector_2) {
+        /* p = v1((v1 * v2) / (|v2|*|v2|)) */
+        Vector3D this_vector = new Vector3D(x, y, z);
+        double multiplier = this_vector.dot(vector_2) / (Math.pow((vector_2.getMagnitude()), 2));
+        return new Vector3D(this_vector.getX() * multiplier, this_vector.getY() * multiplier,
+                this_vector.getZ() * multiplier);
+    }
 }
