@@ -91,8 +91,7 @@ public class Vector3D {
   }
   /* gets midpoint of vector */
   public Point3D getMidpoint() {
-    Vector3D this_vector = new Vector3D(x, y, z);
-    return new LineSegment3D(this_vector).getMidpoint();
+    return new LineSegment3D(this).getMidpoint();
   }
   /* multiplies vector by scalar */
   public Vector3D multiplyScalar(double scalar) {
@@ -105,48 +104,49 @@ public class Vector3D {
   }
   /* returns dot product of vector and vector_2 */
   public double dot(Vector3D vector_2) {
-    return x * vector_2.getX() + y * vector_2.getY() + z * vector_2.getZ();
+    return (x * vector_2.getX()) + (y * vector_2.getY()) + (z * vector_2.getZ());
   }
   /* returns cross product of vector and vector_2 */
   public Vector3D cross(Vector3D vector_2) {
-    double cross_x = y * vector_2.getZ() - z * vector_2.getY();
-    double cross_y = z * vector_2.getX() - x * vector_2.getZ();
-    double cross_z = x * vector_2.getY() - y * vector_2.getX();
-    return new Vector3D(cross_x, cross_y, cross_z);
+    return new Vector3D(
+        (y * vector_2.getZ()) - (z * vector_2.getY()),
+        (z * vector_2.getX()) - (x * vector_2.getZ()),
+        (x * vector_2.getY()) - (y * vector_2.getX()));
   }
   /* returns magnitude of vector */
   public double getMagnitude() {
-    Vector3D this_vector = new Vector3D(x, y, z);
-    return Math.sqrt(this_vector.dot(this_vector));
+    return Math.sqrt(dot(this));
   }
   /* returns angle between two vectors */
   public double getAngle(Vector3D vector_2) { // ToDo: angle class??
-    Vector3D this_vector = new Vector3D(x, y,
-                                        z); // todo: any way to refer to this vector directly?
-    double  numerator = this_vector.dot(vector_2);
-    double denominator = this_vector.getMagnitude() * vector_2.getMagnitude();
-    return Math.acos(numerator / denominator);
+    return Math.acos(
+        (dot(vector_2) /* numerator */
+            / getMagnitude()) * vector_2.getMagnitude()); /* denominator */
   }
   /* returns whether this vector is parallel */
-  public boolean isParallel(Vector3D vector_2) { // todo: avoid dividing by zero
-    double factor = x / vector_2.getX();
-    return (y / vector_2.getY() == factor && z / vector_2.getZ() == factor);
+  public boolean isParallel(Vector3D vector_2) {
+  // todo: figure out what to do when dividing by zero
+    try {
+      double factor = x / vector_2.getX();
+      return (((y / vector_2.getY()) == factor) && ((z / vector_2.getZ()) == factor));
+    } catch(Exception e) {
+      System.out.println("Division by zero in Vector2D.isParallel");
+      return false; /* is it always false? We need to figure out what to do in this case */
+    }
   }
   /* returns whether this vector is perpendicular */
   public boolean isPerpendicular(Vector3D vector_2) {
-    Vector3D this_vector = new Vector3D(x, y, z);
-    return (this_vector.dot(vector_2) == 0);
+    return (0 == dot(vector_2));
   }
   /* returns whether this vector is equal */
   public boolean equals(Vector3D vector_2) {
-    return (x == vector_2.getX() && y == vector_2.getY() && z == vector_2.getZ());
+    return ((x == vector_2.getX()) && (y == vector_2.getY()) && (z == vector_2.getZ()));
   }
     /* returns vector projected onto vector_2 */
     public Vector3D getProjection(Vector3D vector_2) {
         /* p = v1((v1 * v2) / (|v2|*|v2|)) */
-        Vector3D this_vector = new Vector3D(x, y, z);
-        double multiplier = this_vector.dot(vector_2) / (Math.pow((vector_2.getMagnitude()), 2));
-        return new Vector3D(this_vector.getX() * multiplier, this_vector.getY() * multiplier,
-                this_vector.getZ() * multiplier);
+        double multiplier = dot(vector_2) / (Math.pow((vector_2.getMagnitude()), 2));
+        return new Vector3D(getX() * multiplier, getY() * multiplier,
+            getZ() * multiplier);
     }
 }

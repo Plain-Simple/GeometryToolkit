@@ -17,7 +17,7 @@ public class Point2D {
     return y;
   }
   /* returns String representation of point */
-  public String getPoint() {
+  public String getPointString() {
     return "(" + x + ", " + y + ")";
   }
   /* returns distance between points */

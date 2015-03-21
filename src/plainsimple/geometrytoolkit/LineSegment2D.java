@@ -22,10 +22,12 @@ public class LineSegment2D {
   }
   /* returns length of segment */
   public double getLength() {
-    return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
+    return Math.sqrt(Math.pow((x2 - x1), 2) +
+                     Math.pow((y2 - y1), 2));
   }
   /* returns midpoint */
   public Point2D getMidpoint() {
-    return new Point2D((x1 + x2) / 2, (y1 + y2) / 2);
+    return new Point2D((x1 + x2) / 2,
+                       (y1 + y2) / 2);
   }
 }

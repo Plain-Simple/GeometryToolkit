@@ -1,7 +1,5 @@
 package plainsimple.geometrytoolkit;
 
-import sun.plugin.dom.exception.PluginNotSupportedException;
-
 public class Plane3D {
   /* ax + by + cz = d */
   private double a;
@@ -22,18 +20,18 @@ public class Plane3D {
         Vector3D AC = new Vector3D(A, C);
         /* get vector perpendicular to both ab and ac */
         Vector3D cross = AB.cross(AC);
-        this.a = cross.getX();
-        this.b = cross.getY();
-        this.c = cross.getZ();
+      a = cross.getX();
+      b = cross.getY();
+      c = cross.getZ();
         /* use coordinates of Point A to determine equation of plane */
-        this.d = a * A.getX() + b * A.getY() + c * A.getZ();
+      d = (a * A.getX()) + (b * A.getY()) + (c * A.getZ());
     }
   /* constructs plane using a point and a vector perpendicular to the plane */
   public Plane3D(Vector3D vector, Point3D point) {
     a = vector.getX();
     b = vector.getY();
     c = vector.getZ();
-    d = a * point.getX() + b * point.getY() + c * point.getZ();
+    d = (a * point.getX()) + (b * point.getY()) + (c * point.getZ());
   }
     /* returns a */
     public double getA() {
@@ -61,17 +59,17 @@ public class Plane3D {
     }
   /* returns whether plane contains vector */
   public boolean containsVector(Vector3D vector) {
-    return (a * vector.getX() + b * vector.getY() + c * vector.getZ() == d);
+    return ((a * vector.getX()) + (b * vector.getY()) + (c * vector.getZ())) == d;
   }
   /* returns whether vector is parallel to plane */
   public boolean isParallel(Vector3D vector) {
     Vector3D plane_as_vector = new Vector3D(a, b, c);
-    return(plane_as_vector.isPerpendicular(vector));
+    return plane_as_vector.isPerpendicular(vector);
   }
   /* returns whether vector is perpendicular to plane */
   public boolean isPerpendicual(Vector3D vector) {
     Vector3D plane_as_vector = new Vector3D(a, b, c);
-    return(plane_as_vector.isParallel(vector));
+    return plane_as_vector.isParallel(vector);
   }
     /* returns whether plane is parallel to plane_2 */
     public boolean isParallel(Plane3D plane_2) {
@@ -85,10 +83,10 @@ public class Plane3D {
     }
   /* returns whether plane contains point */
   public boolean containsPoint(Point3D point) {
-      return (a * point.getX() + b * point.getY() + c * point.getZ() == d);
+      return ((a * point.getX()) + (b * point.getY()) + (c * point.getZ())) == d;
   }
     /* returns a Point3D that would be found on the plane */
-    public Point3D getPointOnPlane() {
+    public Point3D getPointOnPlane() { //TODO: explain purpose of this
         /* fulfill condition that ax + by + cz = d */
         return new Point3D(0.0, 0.0, d);
     }
@@ -109,11 +107,7 @@ public class Plane3D {
     /* returns distance from plane to plane_2 */
     public double distanceToPlane(Plane3D plane_2) { // todo: finish. will need better Line3D class
         Plane3D this_plane = new Plane3D(a, b, c, d);
-        if(this_plane.isParallel(plane_2)) {
-            return 0.0;
-        } else { /* if planes are not parallel they will intersect */
-            return 0.0; /* distance will be 0 */
-        }
+      return this_plane.isParallel(plane_2) ? 0.0 : 0.0;
     }
     public double distanceToLine(Line3D line) { // todo: finish. will need better Line3D class
         return 0.0;

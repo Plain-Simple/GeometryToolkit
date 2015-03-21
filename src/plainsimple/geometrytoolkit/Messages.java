@@ -130,5 +130,9 @@ public interface Messages {
             "<Vector3D>  |_ <Vector3D>    Returns TRUE if vectors are perpendicular, otherwise FALSE\n" +
             "<Vector3D>  == <Vector3D>    Returns TRUE if vectors are equivalent, otherwise FALSE")
     String vector3d_help();
+  @En("Error: variable \"{0}\" does not exist")
+  String variable_error(String variable_name);
 
+  @En("Error: argument \"{0}\" was not recognized")
+  String object_not_recognized(String object);
 }

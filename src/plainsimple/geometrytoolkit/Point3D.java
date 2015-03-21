@@ -23,13 +23,14 @@ public class Point3D {
     return z;
   }
   /* returns String representation of point */
-  public String getPoint() {
+  public String getPointString() {
     return "(" + x + ", " + y + ", " + z + ")";
   }
   /* returns distance between points */
   public double getDistance(Point3D point_2) {
     return Math.sqrt(Math.pow((x - point_2.getX()), 2) +
-                     Math.pow((y - point_2.getY()), 2) + Math.pow((z - point_2.getZ()), 2));
+                     Math.pow((y - point_2.getY()), 2) +
+                     Math.pow((z - point_2.getZ()), 2));
   }
 }
 

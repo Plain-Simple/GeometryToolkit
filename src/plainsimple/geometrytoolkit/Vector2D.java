@@ -62,7 +62,7 @@ public class Vector2D {
   }
   /* returns dot product of vector and vector_2 */
   public double dot(Vector2D vector_2) {
-    return x * vector_2.getX() + y * vector_2.getY();
+    return (x * vector_2.getX()) + (y * vector_2.getY());
   }
   /* returns magnitude of vector */
   public double getMagnitude() {
@@ -70,26 +70,27 @@ public class Vector2D {
     return Math.sqrt(this_vector.dot(this_vector));
   }
   /* returns angle between two vectors */
-  public double getAngle(Vector2D
-                         vector_2) { // ToDo: angle class?? Also make sure vectors are tail-to-tail
-    Vector2D this_vector = new Vector2D(x,
-                                        y); // todo: any way to refer to this vector directly?
-    double  numerator = this_vector.dot(vector_2);
-    double denominator = this_vector.getMagnitude() * vector_2.getMagnitude();
+  public double getAngle(Vector2D vector_2) {
+  // ToDo: angle class?? Also make sure vectors are tail-to-tail
+    double  numerator = dot(vector_2);
+    double denominator = getMagnitude() * vector_2.getMagnitude();
     return Math.acos(numerator / denominator);
   }
   /* returns whether this vector is parallel */
-  public boolean isParallel(Vector2D vector_2) { // todo: avoid dividing by zero
-    double factor = x / vector_2.getX();
-    return (y / vector_2.getY() == factor);
+  public boolean isParallel(Vector2D vector_2) { // todo: figure out what to do when dividing by zero
+    try {
+      return (x / vector_2.getX()) == (y / vector_2.getY());
+    } catch(Exception e) {
+      System.out.println("Division by zero in Vector2D.isParallel");
+      return false; /* is it always false? We need to figure out what to do in this case */
+    }
   }
   /* returns whether this vector is perpendicular */
   public boolean isPerpendicular(Vector2D vector_2) {
-    Vector2D this_vector = new Vector2D(x, y);
-    return (this_vector.dot(vector_2) == 0);
+    return (0 == dot(vector_2));
   }
   /* returns whether this vector is equal */
   public boolean equals(Vector2D vector_2) {
-    return (x == vector_2.getX() && y == vector_2.getY());
+    return (x == vector_2.getX()) && (y == vector_2.getY());
   }
 }
