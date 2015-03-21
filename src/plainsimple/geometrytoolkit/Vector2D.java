@@ -71,13 +71,14 @@ public class Vector2D {
   }
   /* returns angle between two vectors */
   public double getAngle(Vector2D vector_2) {
-  // ToDo: angle class?? Also make sure vectors are tail-to-tail
+    // ToDo: angle class?? Also make sure vectors are tail-to-tail
     double  numerator = dot(vector_2);
     double denominator = getMagnitude() * vector_2.getMagnitude();
     return Math.acos(numerator / denominator);
   }
   /* returns whether this vector is parallel */
-  public boolean isParallel(Vector2D vector_2) { // todo: figure out what to do when dividing by zero
+  public boolean isParallel(Vector2D
+                            vector_2) { // todo: figure out what to do when dividing by zero
     try {
       return (x / vector_2.getX()) == (y / vector_2.getY());
     } catch(Exception e) {

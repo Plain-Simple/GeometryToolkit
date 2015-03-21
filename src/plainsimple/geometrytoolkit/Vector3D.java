@@ -27,35 +27,36 @@ public class Vector3D {
     z = 0.0;
     this.name = name;
   }
-    /* constructs vector from point_1 to point_2 */
-    public Vector3D(Point3D point_1, Point3D point_2) {
-        x = point_2.getX() - point_1.getX();
-        y = point_2.getY() - point_1.getY();
-        z = point_2.getZ() - point_1.getZ();
+  /* constructs vector from point_1 to point_2 */
+  public Vector3D(Point3D point_1, Point3D point_2) {
+    x = point_2.getX() - point_1.getX();
+    y = point_2.getY() - point_1.getY();
+    z = point_2.getZ() - point_1.getZ();
+  }
+  /* constructs vector perpendicular to plane */
+  public Vector3D(Plane3D plane) {
+    /* will have component form <a, b, c> */
+    x = plane.getA();
+    y = plane.getB();
+    z = plane.getC();
+  }
+  /* constructs Vector3D give String "<x,y,z>" */
+  public Vector3D constructFromString(String name, String args) {
+    ArrayList<Double> coordinates = new ArrayList<>();
+    Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\D*");
+    Matcher matcher = parse_vector.matcher(args);
+    try {
+      while (matcher.find()) {
+        coordinates.add(Double.parseDouble(matcher.group(1)));
+      }
+      Vector3D new_vector3d = new Vector3D(name);
+      new_vector3d.setCoordinates(coordinates.get(0), coordinates.get(1),
+                                  coordinates.get(2));
+      return  new_vector3d;
+    } catch(Exception e) {
+      return null;
     }
-    /* constructs vector perpendicular to plane */
-    public Vector3D(Plane3D plane) {
-        /* will have component form <a, b, c> */
-        x = plane.getA();
-        y = plane.getB();
-        z = plane.getC();
-    }
-    /* constructs Vector3D give String "<x,y,z>" */
-    public Vector3D constructFromString(String name, String args) {
-        ArrayList<Double> coordinates = new ArrayList<>();
-        Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\D*");
-        Matcher matcher = parse_vector.matcher(args);
-        try {
-            while (matcher.find()) {
-                coordinates.add(Double.parseDouble(matcher.group(1)));
-            }
-            Vector3D new_vector3d = new Vector3D(name);
-            new_vector3d.setCoordinates(coordinates.get(0), coordinates.get(1), coordinates.get(2));
-            return  new_vector3d;
-        }catch(Exception e) {
-            return null;
-        }
-    }
+  }
   public void setCoordinates(double x_coord, double y_coord, double z_coord) {
     x = x_coord;
     y = y_coord;
@@ -109,9 +110,9 @@ public class Vector3D {
   /* returns cross product of vector and vector_2 */
   public Vector3D cross(Vector3D vector_2) {
     return new Vector3D(
-        (y * vector_2.getZ()) - (z * vector_2.getY()),
-        (z * vector_2.getX()) - (x * vector_2.getZ()),
-        (x * vector_2.getY()) - (y * vector_2.getX()));
+             (y * vector_2.getZ()) - (z * vector_2.getY()),
+             (z * vector_2.getX()) - (x * vector_2.getZ()),
+             (x * vector_2.getY()) - (y * vector_2.getX()));
   }
   /* returns magnitude of vector */
   public double getMagnitude() {
@@ -120,12 +121,12 @@ public class Vector3D {
   /* returns angle between two vectors */
   public double getAngle(Vector3D vector_2) { // ToDo: angle class??
     return Math.acos(
-        (dot(vector_2) /* numerator */
-            / getMagnitude()) * vector_2.getMagnitude()); /* denominator */
+             (dot(vector_2) /* numerator */
+              / getMagnitude()) * vector_2.getMagnitude()); /* denominator */
   }
   /* returns whether this vector is parallel */
   public boolean isParallel(Vector3D vector_2) {
-  // todo: figure out what to do when dividing by zero
+    // todo: figure out what to do when dividing by zero
     try {
       double factor = x / vector_2.getX();
       return (((y / vector_2.getY()) == factor) && ((z / vector_2.getZ()) == factor));
@@ -140,13 +141,14 @@ public class Vector3D {
   }
   /* returns whether this vector is equal */
   public boolean equals(Vector3D vector_2) {
-    return ((x == vector_2.getX()) && (y == vector_2.getY()) && (z == vector_2.getZ()));
+    return ((x == vector_2.getX()) && (y == vector_2.getY())
+            && (z == vector_2.getZ()));
   }
-    /* returns vector projected onto vector_2 */
-    public Vector3D getProjection(Vector3D vector_2) {
-        /* p = v1((v1 * v2) / (|v2|*|v2|)) */
-        double multiplier = dot(vector_2) / (Math.pow((vector_2.getMagnitude()), 2));
-        return new Vector3D(getX() * multiplier, getY() * multiplier,
-            getZ() * multiplier);
-    }
+  /* returns vector projected onto vector_2 */
+  public Vector3D getProjection(Vector3D vector_2) {
+    /* p = v1((v1 * v2) / (|v2|*|v2|)) */
+    double multiplier = dot(vector_2) / (Math.pow((vector_2.getMagnitude()), 2));
+    return new Vector3D(getX() * multiplier, getY() * multiplier,
+                        getZ() * multiplier);
+  }
 }
