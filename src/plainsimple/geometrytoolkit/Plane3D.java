@@ -90,7 +90,7 @@ public class Plane3D {
     /* returns a Point3D that would be found on the plane */
     public Point3D getPointOnPlane() {
         /* fulfill condition that ax + by + cz = d */
-        return new Point3D(1.0, 1.0, (d - a - b) / c);
+        return new Point3D(0.0, 0.0, d);
     }
     /* returns distance from point to plane */
     public double distanceToPoint(Point3D point) {
