@@ -151,4 +151,9 @@ public class Vector3D {
     return new Vector3D(getX() * multiplier, getY() * multiplier,
                         getZ() * multiplier);
   }
+    /* returns a vector perpendicular to this one */
+    public Vector3D getPerpendicular() { // todo: learn matrices
+        /* dot product must equal zero */
+        return new Vector3D(0,0,0);
+    }
 }
