@@ -124,7 +124,7 @@ public interface Messages {
       +
       "Supported Operators:\n" +
       " <Vector3D>                  Outputs Vector in component form\n" +
-      "|<Vector3D|                  Magnitude calculation\n" +
+      "|<Vector3D>|                 Magnitude calculation\n" +
       "<Vector3D> +/- <Vector3D>    Vector addition/subtraction\n" +
       "<Vector3D>  *  <Vector3D>    Vector dot product\n" +
       "<Vector3D>  *  < Number >    Scalar multiplication\n" +
@@ -136,9 +136,41 @@ public interface Messages {
       +
       "<Vector3D>  == <Vector3D>    Returns TRUE if vectors are equivalent, otherwise FALSE")
   String vector3d_help();
+
+  @En("The POINT3D OBJECT\n" +
+      "Constructors:\n" +
+      "\"<name> = (x,y,z)\" creates a Point3D variable named <name> with coordinates x, y, z\n\n"
+      +
+      "Supported Operators:\n" +
+      "<Point3D>                   Outputs Point in coordinate form\n" +
+      "<Point3D>  -  <Point3D>     Distance between points")
+  String point3d_help();
+
+  @En("The PLANE3D Object\n" +
+      "Constructors:\n" +
+      "\"<name> = <x,y,z>\"\n" +
+      "<name> = " +
+      "Supported Operators:\n" +
+      "<Plane3D>                    Outputs Cartesian Equation of plane\n" +
+      "<Plane3D>  -  <Plane3D>      Distance between planes\n" +
+      "<Plane3D>  -  <Point3D>      Distance between point and plane\n" +
+      "<Plane3D>  -   <Line3D>      Distance between line and plane\n" +
+      "<Plane3D>  ct <Point3D>      Returns TRUE if Plane contains Point\n" +
+      "<Plane3D>  ")
+
+  String plane3d_help();
+
+    @En("The LINE3D OBJECT\n" +
+       "Constructors:" +
+       "\"<name> = (x,y,z)+t<x,y,z> Creates a Line3D variable that ...\n\n" +
+            "Supported Operators:\n")
+    String line3d_help();
   @En("Error: variable \"{0}\" does not exist")
   String variable_error(String variable_name);
 
   @En("Error: argument \"{0}\" was not recognized")
   String object_not_recognized(String object);
+
+    @En("Error: \"{0}\" takes a maximum of {1} parameters")
+    String parameter_error(String function, int max_parameters);
 }
