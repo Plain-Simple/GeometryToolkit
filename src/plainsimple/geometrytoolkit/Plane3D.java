@@ -81,6 +81,18 @@ public class Plane3D {
     Plane3D this_plane = new Plane3D(a, b, c, d);
     return (new Vector3D(this_plane).isPerpendicular(new Vector3D(plane_2)));
   }
+    /* returns whether plane is perpendicular to line */
+    public boolean isPerpendicular(Line3D line) {
+        Plane3D this_plane = new Plane3D(a,b,c,d);
+        /* perpendicular if it is parallel to a vector perpendicular to the plane */
+        return (line.getDirectionVector().isParallel(new Vector3D(a,b,c)));
+    }
+    /* returns whether plane is parallel to line */
+    public boolean isParallel(Line3D line) {
+        Plane3D this_plane = new Plane3D(a,b,c,d);
+        /* parallel if it is perpendicular to a vector perpendicular to the plane */
+        return(line.getDirectionVector().isPerpendicular(new Vector3D(a,b,c)));
+    }
   /* returns whether plane contains point */
   public boolean containsPoint(Point3D point) {
     return ((a * point.getX()) + (b * point.getY()) + (c * point.getZ())) == d;
@@ -105,14 +117,26 @@ public class Plane3D {
     return projection.getMagnitude();
   }
   /* returns distance from plane to plane_2 */
-  public double distanceToPlane(Plane3D
-                                plane_2) { // todo: finish. will need better Line3D class
+  public double distanceToPlane(Plane3D plane_2) {
     Plane3D this_plane = new Plane3D(a, b, c, d);
-    return this_plane.isParallel(plane_2) ? 0.0 : 0.0;
+    if(this_plane.isParallel(plane_2)) {
+        /* construct line intersecting both planes, which are parallel */
+        Line3D intersecting_line = new Line3D(this_plane);
+        /* distance from point where line intersects this_plane to where line intersects
+        plane_2 */
+        return intersecting_line.getPlaneIntersection(this_plane)
+                .getDistance(intersecting_line.getPlaneIntersection(plane_2));
+    }
+    else { /* planes aren't parallel - they intersect */
+        return 0.0;
+    }
   }
-  public double distanceToLine(Line3D
-                               line) { // todo: finish. will need better Line3D class
-    return 0.0;
+  public double distanceToLine(Line3D line) { // todo: finish. will need better Line3D class
+      Plane3D this_plane = new Plane3D(a, b, c, d);
+      if(this_plane.isParallel(line)) {
+        return 0.0;
+      } else
+        return 0.0;
   }
   /* returns angle between plane and plane_2 */
   public double angleBetweenPlanes(Plane3D plane_2) {
