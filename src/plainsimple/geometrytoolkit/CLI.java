@@ -10,8 +10,9 @@ class CLI {
   /* used to access C10N messages */
   private static final Messages msg = C10N.get(Messages.class);
   /* stores all user-created objects */
-  private Hashtable<String, Object> user_objects = new
-  Hashtable<>(); //TODO: this is apparently obsolete now
+  private Hashtable<String, Object> user_objects = new Hashtable<>();
+    /* used for printing help */
+    private static final Help help = new Help();
   /* regex pattern used to parse user input */
   private final Pattern user_command_pattern =
     Pattern.compile("([^\\s\"\']+)|\"([^\"]*)\"|\'([^\']*)\'");
@@ -26,8 +27,7 @@ class CLI {
       } else {
         processInput(user_input);
       }
-    } while (!Objects.equals(user_input,
-                             "exit")); //TODO: why not while (user_input != exit) ?
+    } while (!user_input.equals("exit"));
   }
   private String getInput() {
     Println(msg.command_waiting());
@@ -35,14 +35,13 @@ class CLI {
       System.in); //TODO: is it efficient to make a new scanner each time?
     return scanner.nextLine();
   }
-  private void processInput(String
-                            user_input) { //TODO: strip spaces + lowercase everything
+  private void processInput(String user_input) {
     ArrayList<String> arguments = parseInput(user_input);
     Println("Debugging: arguments are " + arguments);
     switch (arguments.get(0)) {
-    case "help": // todo: help function (0.2)
+    case "help":
     case "Help":
-      helpFunction(arguments);
+      help.handleHelp(arguments);
       break;
     case "list": // todo: list function (0.3)
       break;
@@ -97,22 +96,7 @@ class CLI {
       }
     }
   }
-  /* handles help commands */
-  private void helpFunction(ArrayList<String> args) {
-    if(1 == args.size()) { /* print general help */
-      Println(msg.general_help());
-    } else if(2 == args.size()) { /* help <ObjectType> */
-      switch(args.get(1)) {
-      case "Vector3D":
-      case "vector3d":
-      case "Vector3d":
-        Println(msg.vector3d_help());
-        break;
-      default:
-        Println(msg.variable_error(args.get(1)));
-      }
-    }
-  }
+
   private ArrayList<String> parseInput(String user_input) {
     ArrayList<String> arguments = new ArrayList<>();
     Matcher matcher = user_command_pattern.matcher(user_input);
