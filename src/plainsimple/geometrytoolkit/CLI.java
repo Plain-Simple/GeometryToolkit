@@ -50,31 +50,11 @@ class CLI {
     }
   }
   private void loadObject(ArrayList<String> arguments) {
-    if (arguments.contains("=")) { /* command syntax: <Objectname> = constructor */
-      ArrayList<String> constructor_args = new ArrayList<>();
-      /* collect constructor args in new list */
-      for (int i = arguments.indexOf("=") + 1; i < arguments.size(); i++) {
-        constructor_args.add(arguments.get(i));
-      }
-      Println("Constructor detected: " + constructor_args);
-      Object object_2 = getObject(constructor_args.get(0));
-      if (null == object_2) {
-        Println(msg.variable_error(constructor_args.get(0)));
-      } else {
-        Vector3D vector3d_2 = getVector3D(object_2);
-        Object returned_object = handleVector3D(vector3d_2, constructor_args, true);
-        if (returned_object.getClass().equals(
-              Vector3D.class)) {/* Vector3D created successfully */
-          Vector3D new_vector3d = getVector3D(returned_object);
-          new_vector3d.setName(arguments.get(0));
-          Println(msg.vector() + msg.double_quote() + new_vector3d.getName() +
-                  msg.double_quote() +
-                  msg.created() + new_vector3d.getComponentForm());
-          user_objects.put(new_vector3d.getName(), new_vector3d);
-        } else
-          Println(msg.error_creating_object() + msg.double_quote() + arguments.get(0)
-                  + msg.double_quote());
-      }
+    if (arguments.contains("=")) {
+        Constructor new_object = new Constructor(arguments);
+        if(new_object.create())
+            putObject(new_object.getMessage(), new_object.getObject());
+        Println(new_object.getMessage());
     } else {
       try { /* user is referencing an object - look in list of objects */
         Object referenced_object = getObject(arguments.get(0));
@@ -82,16 +62,15 @@ class CLI {
         Class object_class = referenced_object.getClass();
         Object returned_object = msg.generic_error(); /* temporary */
         try {
-          if (object_class.equals(Vector3D.class)) { /* argument is a Vector3D */
-            Vector3D referenced_vector3d = getVector3D(referenced_object);
-            returned_object = handleVector3D(referenced_vector3d, arguments, false);
+          if (object_class.equals(Vector3D.class)) {
+            returned_object = handleVector3D((Vector3D) referenced_object, arguments, false);
           } else if (object_class.equals(Vector2D.class)) {
             Vector2D vector_1 = (Vector2D) referenced_object;
           }
         } catch(IllegalArgumentException e) {
         }
         Println((String) returned_object);
-      } catch (NullPointerException e) {
+      } catch (NullPointerException e) { /* arguments.get(0) not a valid object */
         Println(msg.variable_error(arguments.get(0)));
       }
     }
@@ -101,13 +80,11 @@ class CLI {
     ArrayList<String> arguments = new ArrayList<>();
     Matcher matcher = user_command_pattern.matcher(user_input);
     while(matcher.find()) {
-      if(null != matcher.group(1)) { /* if argument is space-separated */
+      if(null != matcher.group(1)) { /* argument is space-separated */
         arguments.add(matcher.group(1));
-      } else if(null != matcher.group(
-                  2)) { /* if argument is enclosed in double-quotes */
+      } else if(null != matcher.group(2)) { /* argument is enclosed in double-quotes */
         arguments.add(matcher.group(2));
-      } else if(null != matcher.group(
-                  3)) { /* if argument is enclosed in single-quotes */
+      } else if(null != matcher.group(3)) { /* argument is enclosed in single-quotes */
         arguments.add(matcher.group(3));
       }
     }
@@ -119,11 +96,13 @@ class CLI {
     /* account for possibility that user has entered |vector| */
     if(object_name.startsWith("|") && object_name.endsWith("|")) {
       object_name = object_name.substring(1, object_name.length() - 1);
-    } else if(object_name.startsWith("<") && object_name.endsWith(">")) {
+    }
+    if(object_name.startsWith("<") && object_name.endsWith(">")) {
       return new Vector3D().constructFromString("", object_name);
     }
     try { /* try parsing to double */
       double d = Double.parseDouble(object_name);
+        Println("double parsed successfully " + d);
       return d;
     } catch(IllegalArgumentException ex) {}
     try {
@@ -132,11 +111,19 @@ class CLI {
     } catch(NullPointerException e) {} /* object not found */
     return null; /* MUST BE HANDLED!!! */
   }
+    /* puts object in user_objects hashtable */
+    private void putObject(String name, Object object) { // todo: one command to add/replace?
+        if(user_objects.containsKey(name)) { /* avoid duplicates */
+            user_objects.remove(name);
+        }
+        user_objects.put(name, object);
+    }
   /* handles commands involving Vector3D objects */
-  private Object handleVector3D(Vector3D vector_1, ArrayList<String> args,
+  public Object handleVector3D(Object vector_3d, ArrayList<String> args,
                                 boolean constructor) {
     /* if constructor == true, need to pass a Vector3D object. Otherwise pass String */
     // todo: try-catch IllegalArgumentException. Allow constructor Point3D->Point3D. Implement remaining functions
+      Vector3D vector_1 = (Vector3D) vector_3d;
     if(1 == args.size()) { /* syntax is <Objectname> */
       if(constructor) {
         try {
@@ -171,38 +158,23 @@ class CLI {
       case "==":
         vector_2 = getVector3D(getObject(args.get(2)));
         break;
+          default: // todo: error message: invalid operator
+
       }
       switch (operator) {
       case "+": /* vector addition */
-        return constructor ? vector_1.addVector(vector_2) : vector_1.getName() +
-               msg.plus_sign() +
-               vector_2.getName() + msg.equal_sign() +
+        return constructor ? vector_1.addVector(vector_2) :
                vector_1.addVector(vector_2).getComponentForm();
       case "-": /* vector subtraction */
         return constructor ? vector_1.addVector(vector_2.multiplyScalar(
-            -1)) : vector_1.getComponentForm() + msg.minus_sign() +
-               vector_2.multiplyScalar(-1).getComponentForm() + msg.equal_sign() +
-               vector_1.addVector(vector_2.multiplyScalar(-1)).getComponentForm();
+            -1)) : vector_1.addVector(vector_2.multiplyScalar(-1)).getComponentForm();
       case "*":
         Object object_2 = getObject(args.get(2));
         if(object_2.getClass().equals(Vector3D.class)) { /* vector dot product */
-          vector_2 = getVector3D(object_2);
-          return constructor ? vector_1.dot(vector_2) : vector_1.getName() +
-                 msg.multiply_sign() +
-                 vector_2.getName() + msg.equal_sign() +
-                 vector_1.dot(vector_2);
-        } else if(object_2.getClass().equals(
-                    double.class)) { /* scalar multiplication by double */
-          double d = (double) object_2;
-          return constructor ? vector_1.multiplyScalar(d) : vector_1.getComponentForm() +
-                 msg.multiply_sign() +
-                 d + msg.equal_sign() + vector_1.multiplyScalar(d).getComponentForm();
-        } else if(object_2.getClass().equals(
-                    int.class)) { /* scalar multiplication by int */
-          int i = (int) object_2;
-          return constructor ? vector_1.multiplyScalar(i) : vector_1.getComponentForm() +
-                 msg.multiply_sign() + i +
-                 msg.equal_sign() + vector_1.multiplyScalar(i).getComponentForm();
+          return constructor ? vector_1.dot((Vector3D) object_2) : vector_1.dot((Vector3D) object_2);
+        } else if(object_2.getClass().equals(Double.class)) { /* scalar multiplication */
+          return constructor ? vector_1.multiplyScalar((double) object_2) :
+                  vector_1.multiplyScalar((double) object_2).getComponentForm();
         } else {
           return getTypeError(args.get(2), new String[] {msg.type_double(),
                               msg.type_int(), msg.vector() + msg.three_d()
@@ -210,17 +182,10 @@ class CLI {
         }
       case "/": /* scalar division */
         object_2 = getObject(args.get(2));
-        if(object_2.getClass().equals(double.class)) { /* scalar division by double */
+        if(object_2.getClass().equals(Double.class)) { /* scalar division by double */
           double d = (double) object_2;
-          return constructor ? vector_1.multiplyScalar(1 / d) : vector_1.getName() +
-                 msg.divide_sign() + d +
-                 msg.equal_sign() + vector_1.multiplyScalar(1 / d).getComponentForm();
-        } else if(object_2.getClass().equals(
-                    int.class)) { /* scalar division by double */
-          int i = (int) object_2;
-          return constructor ? vector_1.multiplyScalar(1 / i) :
-                 vector_1.getComponentForm() + msg.divide_sign() + i +
-                 msg.equal_sign() + vector_1.multiplyScalar(1 / i).getComponentForm();
+          return constructor ? vector_1.multiplyScalar(1 / d) :
+                  vector_1.multiplyScalar(1 / d).getComponentForm();
         } else {
           return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
         }
@@ -245,12 +210,8 @@ class CLI {
           return constructor ? true : vector_1.getName() + msg.equal_to() +
                  vector_2.getName();
         } else {
-          if(constructor) {
-            return true;
-          } else {
-            return vector_1.getName() + msg.not_equal_to() + vector_2.getName();
+          return constructor ? true : vector_1.getName() + msg.not_equal_to() + vector_2.getName();
           }
-        }
       default: /* return "Argument 'argument' was not recognized" */
         return msg.argument() + msg.space() + msg.double_quote() + args.get(
                  1) + msg.not_recognized();
@@ -272,7 +233,7 @@ class CLI {
   }
   /* returns object as a Vector3D */
   private Vector3D getVector3D(Object o) {
-    return (Vector3D) o;
+      return (Vector3D) o;
   }
   private void Println(String s) {
     System.out.println(s);
