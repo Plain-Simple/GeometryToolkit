@@ -19,6 +19,8 @@ public class Constructor {
     private String message = "";
     /* used for accessing CLI methods */
     private CLI cli = new CLI();
+    /* used for accessing methods */
+    private StoredObjects stored_objects = new StoredObjects();
     public Constructor(ArrayList<String> arguments) {
       /* collect constructor args in new list */
         name = arguments.get(arguments.indexOf("=") - 1);
@@ -49,7 +51,7 @@ public class Constructor {
         if(validName(name)) {
             System.out.println("name is valid");
             try {
-                Object object_1 = cli.getObject(args.get(0));
+                Object object_1 = stored_objects.get(args.get(0));
                 Class object_class = object_1.getClass();
                 if (Vector3D.class == object_class) { // todo: error handling
                     constructed_object = cli.handleVector3D(object_1, args, true);
