@@ -70,6 +70,8 @@ public interface Messages {
   @En(" was not recognized")
   String not_recognized();
 
+    @En(" -> ")
+    String arrow();
   @En(" - ")
   String minus_sign();
 
@@ -173,4 +175,7 @@ public interface Messages {
 
     @En("Error: \"{0}\" takes a maximum of {1} parameters")
     String parameter_error(String function, int max_parameters);
+
+    @En("Error: Class \"{0}\" not recognized")
+    String class_not_recognized(String class_name);
 }
