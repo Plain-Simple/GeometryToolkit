@@ -10,7 +10,7 @@ class CLI {
   /* used to access C10N messages */
   private static final Messages msg = C10N.get(Messages.class);
   /* stores all user-created objects */
-  private Hashtable<String, Object> user_objects = new Hashtable<>();
+  private StoredObjects user_objects = new StoredObjects();
     /* used for printing help */
     private static final Help help = new Help();
   /* regex pattern used to parse user input */
@@ -51,13 +51,16 @@ class CLI {
   }
   private void loadObject(ArrayList<String> arguments) {
     if (arguments.contains("=")) {
+        Println("Constructor detected");
         Constructor new_object = new Constructor(arguments);
-        if(new_object.create())
-            putObject(new_object.getMessage(), new_object.getObject());
+        if(new_object.create()) {
+            Println("Object created successfully");
+            user_objects.put(new_object.getName(), new_object.getObject());
+        }
         Println(new_object.getMessage());
     } else {
       try { /* user is referencing an object - look in list of objects */
-        Object referenced_object = getObject(arguments.get(0));
+        Object referenced_object = user_objects.get(arguments.get(0));
         /* get class of object so it can be converted to proper object */
         Class object_class = referenced_object.getClass();
         Object returned_object = msg.generic_error(); /* temporary */
@@ -90,34 +93,6 @@ class CLI {
     }
     return arguments;
   }
-  /* looks for object in arraylist, returns if found */
-  public Object getObject(String object_name) {
-    Println("Object name is " + object_name);
-    /* account for possibility that user has entered |vector| */
-    if(object_name.startsWith("|") && object_name.endsWith("|")) {
-      object_name = object_name.substring(1, object_name.length() - 1);
-    }
-    if(object_name.startsWith("<") && object_name.endsWith(">")) {
-      return new Vector3D().constructFromString("", object_name);
-    }
-    try { /* try parsing to double */
-      double d = Double.parseDouble(object_name);
-        Println("double parsed successfully " + d);
-      return d;
-    } catch(IllegalArgumentException ex) {}
-    try {
-      Object object = user_objects.get(object_name);
-      return object;
-    } catch(NullPointerException e) {} /* object not found */
-    return null; /* MUST BE HANDLED!!! */
-  }
-    /* puts object in user_objects hashtable */
-    private void putObject(String name, Object object) { // todo: one command to add/replace?
-        if(user_objects.containsKey(name)) { /* avoid duplicates */
-            user_objects.remove(name);
-        }
-        user_objects.put(name, object);
-    }
   /* handles commands involving Vector3D objects */
   public Object handleVector3D(Object vector_3d, ArrayList<String> args,
                                 boolean constructor) {
@@ -127,7 +102,7 @@ class CLI {
     if(1 == args.size()) { /* syntax is <Objectname> */
       if(constructor) {
         try {
-          Vector3D vector_2 = (Vector3D) getObject(args.get(0));
+          Vector3D vector_2 = (Vector3D) user_objects.get(args.get(0));
           return vector_2;
         } catch(NullPointerException e) {
           /* return Error: "args.get(0)" is not defined */
@@ -156,7 +131,7 @@ class CLI {
       case "//":
       case "|_":
       case "==":
-        vector_2 = getVector3D(getObject(args.get(2)));
+        vector_2 = getVector3D(user_objects.get(args.get(2)));
         break;
           default: // todo: error message: invalid operator
 
@@ -169,7 +144,7 @@ class CLI {
         return constructor ? vector_1.addVector(vector_2.multiplyScalar(
             -1)) : vector_1.addVector(vector_2.multiplyScalar(-1)).getComponentForm();
       case "*":
-        Object object_2 = getObject(args.get(2));
+        Object object_2 = user_objects.get(args.get(2));
         if(object_2.getClass().equals(Vector3D.class)) { /* vector dot product */
           return constructor ? vector_1.dot((Vector3D) object_2) : vector_1.dot((Vector3D) object_2);
         } else if(object_2.getClass().equals(Double.class)) { /* scalar multiplication */
@@ -181,7 +156,7 @@ class CLI {
                                                         });
         }
       case "/": /* scalar division */
-        object_2 = getObject(args.get(2));
+        object_2 = user_objects.get(args.get(2));
         if(object_2.getClass().equals(Double.class)) { /* scalar division by double */
           double d = (double) object_2;
           return constructor ? vector_1.multiplyScalar(1 / d) :
