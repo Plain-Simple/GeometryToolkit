@@ -22,6 +22,7 @@ public class Constructor {
     public Constructor(ArrayList<String> arguments) {
       /* collect constructor args in new list */
         name = arguments.get(arguments.indexOf("=") - 1);
+        System.out.println("name is " + name);
         for (int i = arguments.indexOf("=") + 1; i < arguments.size(); i++) {
             args.add(arguments.get(i));
         }
@@ -36,6 +37,9 @@ public class Constructor {
     public String getMessage() {
         return message;
     }
+    public String getName() {
+        return name;
+    }
     /* returns whether command is a constructor or not */
     public boolean isConstructor(ArrayList<String> args) {
         return (args.contains("="));
@@ -43,13 +47,14 @@ public class Constructor {
     /* attempts to create object and returns whether it was created successfully */
     public boolean create() {
         if(validName(name)) {
+            System.out.println("name is valid");
             try {
                 Object object_1 = cli.getObject(args.get(0));
                 Class object_class = object_1.getClass();
                 if (Vector3D.class == object_class) { // todo: error handling
                     constructed_object = cli.handleVector3D(object_1, args, true);
                     ((Vector3D) constructed_object).setName(name);
-                    message = ((Vector3D) constructed_object).getComponentForm();
+                    message = (name + msg.arrow() + ((Vector3D) constructed_object).getComponentForm());
                 } else if (Vector2D.class == object_class) {
 
                 } else if (Point3D.class == object_class) {
@@ -68,12 +73,12 @@ public class Constructor {
                 return false;
             }
         } else
-            return false;
+           return false;
     }
     /* checks to make sure name for new object is valid */
     private boolean validName(String name) {
         /* rules: must contain alphanumeric characters only */
-        Pattern pattern = Pattern.compile("\\W*");
+        Pattern pattern = Pattern.compile("\\W+");
         Matcher matcher = pattern.matcher(name);
         return (!matcher.find()); /* if found, return false. Otherwise true */
     }
