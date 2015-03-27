@@ -63,16 +63,19 @@ class CLI {
         Object referenced_object = user_objects.get(arguments.get(0));
         /* get class of object so it can be converted to proper object */
         Class object_class = referenced_object.getClass();
-        Object returned_object = msg.generic_error(); /* temporary */
+        Object output = msg.generic_error(); /* temporary */
         try {
           if (object_class.equals(Vector3D.class)) {
-            returned_object = handleVector3D((Vector3D) referenced_object, arguments, false);
+            output = handleVector3D((Vector3D) referenced_object, arguments, false);
           } else if (object_class.equals(Vector2D.class)) {
             Vector2D vector_1 = (Vector2D) referenced_object;
-          }
+          } else
+              Println("Class " + object_class.getClass().getName() + " has not been implemented yet");
         } catch(IllegalArgumentException e) {
         }
-        Println((String) returned_object);
+          /* note: we can do this because we are not using a constructor so all
+          handle methods will return Strings */
+        Println((String) output);
       } catch (NullPointerException e) { /* arguments.get(0) not a valid object */
         Println(msg.variable_error(arguments.get(0)));
       }
@@ -111,29 +114,31 @@ class CLI {
         } catch(IllegalArgumentException e) {
           return getTypeError(args.get(0), new String[] {msg.vector() + msg.three_d()});
         }
-      }
+      } // todo: clean this up, integrate with GeometryObject class
       if(args.get(0).startsWith("|")
           && args.get(0).endsWith("|")) { /* magnitude calculation */
-        double magnitude = vector_1.getMagnitude();
-        return(msg.magnitude_symbol() + vector_1.getName() + msg.magnitude_symbol() +
-               msg.equal_sign() + magnitude);
+        return Double.toString(vector_1.getMagnitude());
       } else { /* print String representation */
-        return(msg.vector() + "\"" + vector_1.getName() + "\" " +
-               vector_1.getComponentForm());
+        return vector_1.getComponentForm();
       }
     }
     if(3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
       String operator = args.get(1);
       Vector3D vector_2 = new Vector3D();
+      Double d = new Double(0.0);
       switch(operator) { /* all these operations require a second Vector3D */
       case "+":
       case "-":
+      case "x":
       case "//":
       case "|_":
       case "==":
-        vector_2 = getVector3D(user_objects.get(args.get(2)));
+        vector_2 = (Vector3D) user_objects.get(args.get(2));
         break;
-          default: // todo: error message: invalid operator
+      case "/":
+        d = (double) Double.parseDouble(args.get(2));
+        break; // return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
+      default: // todo: error message: invalid operator
 
       }
       switch (operator) {
@@ -146,7 +151,7 @@ class CLI {
       case "*":
         Object object_2 = user_objects.get(args.get(2));
         if(object_2.getClass().equals(Vector3D.class)) { /* vector dot product */
-          return constructor ? vector_1.dot((Vector3D) object_2) : vector_1.dot((Vector3D) object_2);
+          return constructor ? vector_1.dot((Vector3D) object_2) : Double.toString(vector_1.dot((Vector3D) object_2));
         } else if(object_2.getClass().equals(Double.class)) { /* scalar multiplication */
           return constructor ? vector_1.multiplyScalar((double) object_2) :
                   vector_1.multiplyScalar((double) object_2).getComponentForm();
@@ -155,15 +160,11 @@ class CLI {
                               msg.type_int(), msg.vector() + msg.three_d()
                                                         });
         }
+      case "x":
+        return constructor ? vector_1.dot(vector_2) : Double.toString(vector_1.dot(vector_2));
       case "/": /* scalar division */
-        object_2 = user_objects.get(args.get(2));
-        if(object_2.getClass().equals(Double.class)) { /* scalar division by double */
-          double d = (double) object_2;
           return constructor ? vector_1.multiplyScalar(1 / d) :
                   vector_1.multiplyScalar(1 / d).getComponentForm();
-        } else {
-          return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
-        }
       case "//": /* are vectors parallel */
         if(vector_1.isParallel(vector_2)) {
           return constructor ? true : vector_1.getName() + msg.parallel() +
@@ -205,10 +206,6 @@ class CLI {
       result += msg.or() + required_types[i];
     }
     return result;
-  }
-  /* returns object as a Vector3D */
-  private Vector3D getVector3D(Object o) {
-      return (Vector3D) o;
   }
   private void Println(String s) {
     System.out.println(s);
