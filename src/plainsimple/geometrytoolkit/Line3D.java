@@ -15,6 +15,10 @@ public class Line3D {
         point = new Point3D(0,0,0);
         direction_vector = new Vector3D(p);
     }
+    /* returns name of Line */
+    public String getName() { return name; }
+    /* sets name of Line */
+    public void setName(String s) { name = s; }
     /* returns direction vector of line */
     public Vector3D getDirectionVector() {
         return direction_vector;
