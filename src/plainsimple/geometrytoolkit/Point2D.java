@@ -8,6 +8,10 @@ public class Point2D {
     this.x = x;
     this.y = y;
   }
+    /* returns name of point */
+    public String getName() { return name; }
+    /* sets name of point */
+    public void setName(String s) { name = s; }
   /* returns x */
   public double getX() {
     return x;
@@ -25,4 +29,5 @@ public class Point2D {
     return Math.sqrt(Math.pow((x - point_2.getX()), 2) +
                      Math.pow((y - point_2.getY()), 2));
   }
+
 }
