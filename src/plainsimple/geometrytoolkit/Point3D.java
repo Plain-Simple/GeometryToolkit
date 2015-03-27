@@ -10,6 +10,10 @@ public class Point3D {
     this.y = y;
     this.z = z;
   }
+    /* returns name of point */
+    public String getName() { return name; }
+    /* sets name of point */
+    public void setName(String s) { name = s; }
   /* returns x */
   public double getX() {
     return x;
