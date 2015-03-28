@@ -24,7 +24,10 @@ public class GeometryObject {
         boolean valid_object = false;
         /* account for possibility that user has entered |vector| */
         if(constructor.startsWith("|") && constructor.endsWith("|")) { // todo: calculate magnitude here?
-            return constructVector(constructor.substring(1, constructor.length() - 1));
+            valid_object = constructVector(constructor.substring(1, constructor.length() - 1));
+            if(valid_object)
+                object = ((Vector3D) object).getMagnitude();
+            return valid_object;
         } else if(constructor.startsWith("<") && constructor.endsWith(">")) {
             return constructVector(constructor);
         } else if(constructor.startsWith("(") && constructor.endsWith(")")) {
@@ -97,6 +100,24 @@ public class GeometryObject {
             return ((Plane3D) object).getName();
         } else if(object_class.equals(Line3D.class)) {
             return ((Line3D) object).getName();
+        } else
+            return ""; // todo: better way?
+    }
+    /* returns String representation of object */
+    public String toString() {
+        Class object_class = object.getClass();
+        if(object_class.equals(Vector3D.class)) {
+            return ((Vector3D) object).getComponentForm();
+        } else if(object_class.equals(Vector2D.class)) {
+            return ((Vector2D) object).getComponentForm();
+        } else if(object_class.equals(Point3D.class)) {
+            return ((Point3D) object).getCoordinates();
+        } else if(object_class.equals(Point2D.class)) {
+            return ((Point2D) object).getCoordinates();
+        } else if(object_class.equals(Plane3D.class)) {
+            return ((Plane3D) object).getCartesianEquation();
+        } else if(object_class.equals(Line3D.class)) {
+            return ((Line3D) object).getEquation();
         } else
             return ""; // todo: better way?
     }
