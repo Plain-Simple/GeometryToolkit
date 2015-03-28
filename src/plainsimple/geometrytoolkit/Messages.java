@@ -13,6 +13,9 @@ public interface Messages {
   @En("Vector ")
   String vector();
 
+    @En("Point ")
+    String point();
+
   @En(" created")
   String created();
 
@@ -96,6 +99,9 @@ public interface Messages {
   @En("3D")
   String three_d();
 
+  @En("2D")
+  String two_d();
+
   @En(" or ")
   String or ();
 
@@ -145,7 +151,8 @@ public interface Messages {
       +
       "Supported Operators:\n" +
       "<Point3D>                   Outputs Point in coordinate form\n" +
-      "<Point3D>  -  <Point3D>     Distance between points")
+      "<Point3D>  -  <Point3D>     Distance between points\n" +
+      "<Point3D>  == <Point3D>     Returns whether points are equal\n")
   String point3d_help();
 
   @En("The PLANE3D Object\n" +
@@ -163,10 +170,19 @@ public interface Messages {
   String plane3d_help();
 
     @En("The LINE3D OBJECT\n" +
-       "Constructors:" +
+       "Constructors:\n" +
        "\"<name> = (x,y,z)+t<x,y,z> Creates a Line3D variable that ...\n\n" +
             "Supported Operators:\n")
     String line3d_help();
+
+    @En("The POINT2D OBJECT\n" +
+       "Constructors:\n" +
+       "\"<name>\" = (x,y,z) \n" +
+       "Supported Operators:\n" +
+       "<Point2D>                   Outputs Coordinates of point\n" +
+       "<Point2D>  -  <Point2D>     Distance between points\n" +
+       "<Point2D>  == <Point2D>     Returns whether points are equal\n")
+    String point2d_help();
   @En("Error: variable \"{0}\" does not exist")
   String variable_error(String variable_name);
 
