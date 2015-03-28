@@ -20,6 +20,10 @@ public class Help {
                 case "point3d":
                 case "Point3d":
                     return point3dHelp();
+                case "Point2D":
+                case "point2d":
+                case "Point2d":
+                    return point2dHelp();
                 default:
                     return (msg.variable_error(args.get(1)));
             }
@@ -35,4 +39,5 @@ public class Help {
     private String point3dHelp() {
         return msg.point3d_help();
     }
+    private String point2dHelp() { return msg.point2d_help(); }
 }
