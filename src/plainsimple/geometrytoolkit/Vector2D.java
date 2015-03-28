@@ -31,15 +31,15 @@ public class Vector2D {
     return name;
   }
   /* returns String representation of the vector */
-  public String getVectorAsString() {
+  public String getComponentForm() {
     return "<" + x + ", " + y + ">";
   }
   /* returns x value of vector */
-  public Double getX() {
+  public Double x() {
     return x;
   }
   /* returns y value of vector */
-  public Double getY() {
+  public Double y() {
     return y;
   }
   /* gets direction vector */
@@ -58,11 +58,11 @@ public class Vector2D {
   }
   /* adds vectors */
   public Vector2D addVector(Vector2D vector_2) {
-    return new Vector2D(x + vector_2.getX(), y + vector_2.getY());
+    return new Vector2D(x + vector_2.x(), y + vector_2.y());
   }
   /* returns dot product of vector and vector_2 */
   public double dot(Vector2D vector_2) {
-    return (x * vector_2.getX()) + (y * vector_2.getY());
+    return (x * vector_2.x()) + (y * vector_2.y());
   }
   /* returns magnitude of vector */
   public double getMagnitude() {
@@ -80,7 +80,7 @@ public class Vector2D {
   public boolean isParallel(Vector2D
                             vector_2) { // todo: figure out what to do when dividing by zero
     try {
-      return (x / vector_2.getX()) == (y / vector_2.getY());
+      return (x / vector_2.x()) == (y / vector_2.y());
     } catch(Exception e) {
       System.out.println("Division by zero in Vector2D.isParallel");
       return false; /* is it always false? We need to figure out what to do in this case */
@@ -92,6 +92,6 @@ public class Vector2D {
   }
   /* returns whether this vector is equal */
   public boolean equals(Vector2D vector_2) {
-    return (x == vector_2.getX()) && (y == vector_2.getY());
+    return (x == vector_2.x()) && (y == vector_2.y());
   }
 }
