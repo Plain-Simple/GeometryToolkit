@@ -10,18 +10,10 @@ public class StoredObjects {
     /* gets object from hashtable. If object does not exist, tries to construct it */
     /* used to access C10N messages */
     private static final Messages msg = C10N.get(Messages.class);
-    public Object get(String object_name) { // todo: isVector3D method, isVector2D method, etc., for constructing simple objects
-        /* account for possibility that user has entered |vector| */
-        if(object_name.startsWith("|") && object_name.endsWith("|")) { // todo: make sure it is a vector
-            object_name = object_name.substring(1, object_name.length() - 1);
-        }
-        if(object_name.startsWith("<") && object_name.endsWith(">")) {
-            return new Vector3D().constructFromString("", object_name);
-        }
-        try { /* try parsing to double */
-            double d = Double.parseDouble(object_name);
-            return d;
-        } catch(IllegalArgumentException ex) {}
+    public Object get(String object_name) {
+        GeometryObject this_object = new GeometryObject(object_name);
+        if(this_object.isObject())
+            return  this_object.getObject();
         try {
             Object object = user_objects.get(object_name);
             return object;
@@ -46,7 +38,8 @@ public class StoredObjects {
             String result = "";
             for(Enumeration<String> objects = user_objects.keys(); objects.hasMoreElements();) {
                 if(user_objects.get(objects.nextElement()).getClass().equals(specified_class))
-                    result += objects.nextElement() + " -> " + user_objects.get(objects.nextElement()).toString(); // todo: fix this!!!
+                    result += objects.nextElement() + " -> " +
+                            (new GeometryObject(user_objects.get(objects.nextElement()))).toString();
             }
             return result;
         }catch(ClassNotFoundException e) {
@@ -65,5 +58,13 @@ public class StoredObjects {
     /* returns whether hashtable contains key */
     public boolean containsKey(String key) {
         return user_objects.contains(key);
+    }
+    /* loads objects from file */
+    public void loadObjects(String file_name) {
+        
+    }
+    /* writes objects to file */
+    public void writeObjects(String file_name) {
+
     }
 }
