@@ -24,29 +24,29 @@ public class Plane3D {
     b = cross.getY();
     c = cross.getZ();
     /* use coordinates of Point A to determine equation of plane */
-    d = (a * A.getX()) + (b * A.getY()) + (c * A.getZ());
+    d = (a * A.x()) + (b * A.y()) + (c * A.z());
   }
   /* constructs plane using a point and a vector perpendicular to the plane */
   public Plane3D(Vector3D vector, Point3D point) {
     a = vector.getX();
     b = vector.getY();
     c = vector.getZ();
-    d = (a * point.getX()) + (b * point.getY()) + (c * point.getZ());
+    d = (a * point.x()) + (b * point.y()) + (c * point.z());
   }
   /* returns a */
-  public double getA() {
+  public double a() {
     return a;
   }
   /* returns b */
-  public double getB() {
+  public double b() {
     return b;
   }
   /* returns c */
-  public double getC() {
+  public double c() {
     return c;
   }
   /* returns d */
-  public double getD() {
+  public double d() {
     return d;
   }
   /* returns name */
@@ -61,6 +61,10 @@ public class Plane3D {
   public boolean containsVector(Vector3D vector) {
     return ((a * vector.getX()) + (b * vector.getY()) + (c * vector.getZ())) == d;
   }
+    /* returns Cartesian equation of plane */
+    public String getCartesianEquation() { // todo: finish
+        return "";
+    }
   /* returns whether vector is parallel to plane */
   public boolean isParallel(Vector3D vector) {
     Vector3D plane_as_vector = new Vector3D(a, b, c);
@@ -95,7 +99,7 @@ public class Plane3D {
     }
   /* returns whether plane contains point */
   public boolean containsPoint(Point3D point) {
-    return ((a * point.getX()) + (b * point.getY()) + (c * point.getZ())) == d;
+    return ((a * point.x()) + (b * point.y()) + (c * point.z())) == d;
   }
   /* returns a Point3D that would be found on the plane */
   public Point3D getPointOnPlane() { //TODO: explain purpose of this
