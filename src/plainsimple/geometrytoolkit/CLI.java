@@ -18,7 +18,8 @@ class CLI {
     Pattern.compile("([^\\s\"\']+)|\"([^\"]*)\"|\'([^\']*)\'");
 
   public void startCLI() {
-    Println(msg.program_full_name());
+      user_objects.loadObjects("GeometryToolkit_SavedObjects");
+      Println(msg.program_full_name());
     String user_input;
     do {
       user_input = getInput();
@@ -43,8 +44,26 @@ class CLI {
     case "Help":
       help.handleHelp(arguments);
       break;
-    case "list": // todo: list function (0.3)
+    case "list":
+        if(1 == arguments.size()) /* list all objects */
+            Println(user_objects.list());
+        else if(2 == arguments.size()) /* list objects of specified type */
+            Println(user_objects.list(arguments.get(1)));
+        else /* too many args */
+            Println(msg.parameter_error("list", 2));
       break;
+    case "remove":
+        if(1 == arguments.size()) { /* remove all objects */
+            user_objects.clear();
+            user_objects.writeObjects("GeometryToolkit_SavedObjects");
+        } else if(2 == arguments.size()) { /* remove specified object */
+            user_objects.remove(arguments.get(1));
+        } else /* too many args */
+            Println(msg.parameter_error("remove", 2)); // todo: messages
+        break;
+    case "rename":
+        break;
+
     default:
       loadObject(arguments);
     }
@@ -56,6 +75,7 @@ class CLI {
         if(new_object.create()) {
             Println("Object created successfully");
             user_objects.put(new_object.getName(), new_object.getObject());
+            user_objects.writeObjects("GeometryToolkit_SavedObjects"); /* update file */
         }
         Println(new_object.getMessage());
     } else {
@@ -158,7 +178,7 @@ class CLI {
       case "|_": /* are vectors perpendicular */
         return vector_1.isPerpendicular(vector_2);
       case "==": /* are vectors equal */
-        return vector_1.equals(vector_2);
+        return Objects.equals(vector_1, vector_2); // todo: fix
       default: /* return "Argument 'argument' was not recognized" */
         return msg.argument() + msg.space() + msg.double_quote() + args.get(
                  1) + msg.not_recognized();
