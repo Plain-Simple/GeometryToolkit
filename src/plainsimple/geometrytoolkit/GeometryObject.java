@@ -2,6 +2,8 @@
 getting Object names */
 package plainsimple.geometrytoolkit;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,14 +34,8 @@ public class GeometryObject {
             return constructVector(constructor);
         } else if(constructor.startsWith("(") && constructor.endsWith(")")) {
             return constructPoint(constructor);
-        }
-        try { /* try parsing to double */
-            double d = Double.parseDouble(constructor);
-            object = d;
-            return true;
-        } catch(IllegalArgumentException ex) {
-            return false;
-        }
+        } else
+            return constructDouble(constructor);
     }
     /* returns whether Vector was constructed successfully from String */
     public boolean constructVector(String args) {
@@ -85,6 +81,16 @@ public class GeometryObject {
             return false;
         }
     }
+    /* returns whether String was successfully parsed to Double */
+    private boolean constructDouble(String args) {
+        try { /* try parsing to double */
+            double d = Double.parseDouble(constructor);
+            object = d;
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
     /* returns name of object */
     public String getName() {
         Class object_class = object.getClass();
@@ -100,8 +106,14 @@ public class GeometryObject {
             return ((Plane3D) object).getName();
         } else if(object_class.equals(Line3D.class)) {
             return ((Line3D) object).getName();
-        } else
-            return ""; // todo: better way?
+        } else if(object_class.equals(String.class)) {
+            return (String) object;
+        } else if(object_class.equals(Double.class)) { // todo: Number Class
+            return Double.toString((double) object);
+        } else if (object_class.equals(Boolean.class)) {
+            return Boolean.toString((boolean) object); // todo: Boolean Class (?)
+        }
+        return ""; // todo: better way?
     }
     /* returns String representation of object */
     public String toString() {
@@ -118,7 +130,14 @@ public class GeometryObject {
             return ((Plane3D) object).getCartesianEquation();
         } else if(object_class.equals(Line3D.class)) {
             return ((Line3D) object).getEquation();
-        } else
+        } else if(object_class.equals(Double.class)) {
+            return Double.toString((double) object);
+        } else if(object_class.equals(String.class)) {
+            return (String) object;
+        } else if (object_class.equals(Boolean.class)) { // todo: test boolean vs. Boolean
+            return Boolean.toString((boolean) object);
+        } else {
+        }
             return ""; // todo: better way?
     }
 
