@@ -66,11 +66,12 @@ class CLI {
         Object output = msg.generic_error(); /* temporary */
         try {
           if (object_class.equals(Vector3D.class)) {
-            output = handleVector3D((Vector3D) referenced_object, arguments, false);
+            output = handleVector3D(referenced_object, arguments, false);
           } else if (object_class.equals(Vector2D.class)) {
-            Vector2D vector_1 = (Vector2D) referenced_object;
-          } else
-              Println("Class " + object_class.getClass().getName() + " has not been implemented yet");
+            output = handleVector2D(referenced_object, arguments, false);
+          } else if(object_class.equals(Point3D.class)) {
+            output = handlePoint3D(referenced_object, arguments, false);
+          }
         } catch(IllegalArgumentException e) {
         }
           /* note: we can do this because we are not using a constructor so all
@@ -114,10 +115,6 @@ class CLI {
         } catch(IllegalArgumentException e) {
           return getTypeError(args.get(0), new String[] {msg.vector() + msg.three_d()});
         }
-      } // todo: clean this up, integrate with GeometryObject class
-      if(args.get(0).startsWith("|")
-          && args.get(0).endsWith("|")) { /* magnitude calculation */
-        return Double.toString(vector_1.getMagnitude());
       } else { /* print String representation */
         return vector_1.getComponentForm();
       }
@@ -136,7 +133,7 @@ class CLI {
         vector_2 = (Vector3D) user_objects.get(args.get(2));
         break;
       case "/":
-        d = (double) Double.parseDouble(args.get(2));
+        d = Double.parseDouble(args.get(2));
         break; // return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
       default: // todo: error message: invalid operator
 
@@ -195,6 +192,192 @@ class CLI {
     }
     return msg.generic_error();
   }
+    public Object handleVector2D(Object vector_2d, ArrayList<String> args,
+                                 boolean constructor) {
+    /* if constructor == true, need to pass a Vector2D object. Otherwise pass String */
+        // todo: try-catch IllegalArgumentException. Allow constructor Point2D->Point2D. Implement remaining functions
+        Vector2D vector_1 = (Vector2D) vector_2d;
+        if(1 == args.size()) { /* syntax is <Objectname> */
+            if(constructor) {
+                try {
+                    Vector2D vector_2 = (Vector2D) user_objects.get(args.get(0));
+                    return vector_2;
+                } catch(NullPointerException e) {
+          /* return Error: "args.get(0)" is not defined */
+                    return msg.error() + msg.double_quote() + msg.variable() +
+                            msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+                } catch(IllegalArgumentException e) {
+                    return getTypeError(args.get(0), new String[] {msg.vector() + msg.two_d()});
+                }
+            } else { /* print String representation */
+                return vector_1.getComponentForm();
+            }
+        }
+        if(3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
+            String operator = args.get(1);
+            Vector2D vector_2 = new Vector2D();
+            Double d = new Double(0.0);
+            switch(operator) { /* all these operations require a second Vector3D */
+                case "+":
+                case "-":
+                case "//":
+                case "|_":
+                case "==":
+                    vector_2 = (Vector2D) user_objects.get(args.get(2));
+                    break;
+                case "/":
+                    d = Double.parseDouble(args.get(2));
+                    break; // return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
+                default: // todo: error message: invalid operator
+
+            }
+            switch (operator) {
+                case "+": /* vector addition */
+                    return constructor ? vector_1.addVector(vector_2) :
+                            vector_1.addVector(vector_2).getComponentForm();
+                case "-": /* vector subtraction */
+                    return constructor ? vector_1.addVector(vector_2.multiplyScalar(
+                            -1)) : vector_1.addVector(vector_2.multiplyScalar(-1)).getComponentForm();
+                case "*":
+                    Object object_2 = user_objects.get(args.get(2));
+                    if(object_2.getClass().equals(Vector2D.class)) { /* vector dot product */
+                        return constructor ? vector_1.dot((Vector2D) object_2) : Double.toString(vector_1.dot((Vector2D) object_2));
+                    } else if(object_2.getClass().equals(Double.class)) { /* scalar multiplication */
+                        return constructor ? vector_1.multiplyScalar((double) object_2) :
+                                vector_1.multiplyScalar((double) object_2).getComponentForm();
+                    } else {
+                        return getTypeError(args.get(2), new String[] {msg.type_double(),
+                                msg.type_int(), msg.vector() + msg.three_d()
+                        });
+                    }
+                case "/": /* scalar division */
+                    return constructor ? vector_1.multiplyScalar(1 / d) :
+                            vector_1.multiplyScalar(1 / d).getComponentForm();
+                case "//": /* are vectors parallel */
+                    if(vector_1.isParallel(vector_2)) {
+                        return constructor ? true : vector_1.getName() + msg.parallel() +
+                                vector_2.getName();
+                    } else {
+                        return constructor ? false : vector_1.getName() + msg.not_parallel() +
+                                vector_2.getName();
+                    }
+                case "|_": /* are vectors perpendicular */
+                    if(vector_1.isPerpendicular(vector_2)) {
+                        return constructor ? true : vector_1.getName() + msg.perpendicular() +
+                                vector_2.getName();
+                    } else {
+                        return constructor ? false : vector_1.getName() + msg.not_perpendicular() +
+                                vector_2.getName();
+                    }
+                case "==": /* are vectors equal */
+                    if(vector_1.equals(vector_2)) {
+                        return constructor ? true : vector_1.getName() + msg.equal_to() +
+                                vector_2.getName();
+                    } else {
+                        return constructor ? true : vector_1.getName() + msg.not_equal_to() + vector_2.getName();
+                    }
+                default: /* return "Argument 'argument' was not recognized" */
+                    return msg.argument() + msg.space() + msg.double_quote() + args.get(
+                            1) + msg.not_recognized();
+            }
+        }
+        return msg.generic_error();
+    }
+    public Object handlePoint3D(Object point_3d, ArrayList<String> args,
+                                boolean constructor) {
+        Point3D point_1 = (Point3D) point_3d;
+        if (1 == args.size()) { /* syntax is <Objectname> */
+            if (constructor) {
+                try {
+                    Point3D point_2 = (Point3D) user_objects.get(args.get(0));
+                    return point_2;
+                } catch (NullPointerException e) {
+          /* return Error: "args.get(0)" is not defined */
+                    return msg.error() + msg.double_quote() + msg.variable() +
+                            msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+                } catch (IllegalArgumentException e) {
+                    return getTypeError(args.get(0), new String[]{msg.point() + msg.three_d()});
+                }
+            } else { /* print String representation */
+                return point_1.getCoordinates();
+            }
+        }
+        if (3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
+            String operator = args.get(1);
+            Point3D point_2 = new Point3D();
+            Double d = new Double(0.0);
+            switch (operator) { /* all these operations require a second Vector3D */
+                case "-":
+                case "==":
+                    point_2 = (Point3D) user_objects.get(args.get(2));
+                    break;
+            }
+            switch (operator) {
+                case "-":
+                    return constructor ? point_1.getDistance(point_2) : Double.toString(point_1.getDistance(point_2));
+                case "==":
+                    if(point_1.equals(point_2)) {
+                        if(constructor)
+                            return true;
+                        else
+                            return point_1.getCoordinates() + msg.equal_to() + point_2.getCoordinates();
+                    } else {
+                        if(constructor)
+                            return false;
+                        else
+                            return point_1.getCoordinates() + msg.not_equal_to() + point_2.getCoordinates();
+                    }
+            }
+        }
+        return  msg.generic_error();
+    }
+    public Object handlePoint2D(Object point_2d, ArrayList<String> args,
+                                boolean constructor) {
+        Point2D point_1 = (Point2D) point_2d;
+        if (1 == args.size()) { /* syntax is <Objectname> */
+            if (constructor) {
+                try {
+                    Point2D point_2 = (Point2D) user_objects.get(args.get(0));
+                    return point_2;
+                } catch (NullPointerException e) {
+          /* return Error: "args.get(0)" is not defined */
+                    return msg.error() + msg.double_quote() + msg.variable() +
+                            msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+                } catch (IllegalArgumentException e) {
+                    return getTypeError(args.get(0), new String[]{msg.point() + msg.two_d()});
+                }
+            } else { /* print String representation */
+                return point_1.getCoordinates();
+            }
+        }
+        if (3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
+            String operator = args.get(1);
+            Point2D point_2 = new Point2D();
+            switch (operator) { /* all these operations require a second Vector3D */
+                case "-":
+                case "==":
+                    point_2 = (Point2D) user_objects.get(args.get(2));
+                    break;
+            }
+            switch (operator) {
+                case "-":
+                    return constructor ? point_1.getDistance(point_2) : Double.toString(point_1.getDistance(point_2));
+                case "==":
+                    if(point_1.equals(point_2)) {
+                        if(constructor)
+                            return true;
+                        else
+                            return point_1.getCoordinates() + msg.equal_to() + point_2.getCoordinates();
+                    } else {
+                        if(constructor)
+                            return false;
+                        else
+                            return point_1.getCoordinates() + msg.not_equal_to() + point_2.getCoordinates();
+                    }
+            }
+        }
+        return  msg.generic_error();
+    }
 
   /* returns "Error: function cannot be performed. "function" must be of type ... " */
   private String getTypeError(String function, String[] required_types) {
