@@ -5,6 +5,11 @@ public class Point3D {
   private double y;
   private double z;
   private String name;
+    public Point3D() {
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+    }
   public Point3D(double x, double y, double z) {
     this.x = x;
     this.y = y;
@@ -15,26 +20,26 @@ public class Point3D {
     /* sets name of point */
     public void setName(String s) { name = s; }
   /* returns x */
-  public double getX() {
+  public double x() {
     return x;
   }
   /* returns y */
-  public double getY() {
+  public double y() {
     return y;
   }
   /* returns z */
-  public double getZ() {
+  public double z() {
     return z;
   }
   /* returns String representation of point */
-  public String getPointString() {
+  public String getCoordinates() {
     return "(" + x + ", " + y + ", " + z + ")";
   }
   /* returns distance between points */
   public double getDistance(Point3D point_2) {
-    return Math.sqrt(Math.pow((x - point_2.getX()), 2) +
-                     Math.pow((y - point_2.getY()), 2) +
-                     Math.pow((z - point_2.getZ()), 2));
+    return Math.sqrt(Math.pow((x - point_2.x()), 2) +
+                     Math.pow((y - point_2.y()), 2) +
+                     Math.pow((z - point_2.z()), 2));
   }
 }
 
