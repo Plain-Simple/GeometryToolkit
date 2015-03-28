@@ -58,11 +58,17 @@ public class Constructor {
                     ((Vector3D) constructed_object).setName(name);
                     message = (name + msg.arrow() + ((Vector3D) constructed_object).getComponentForm());
                 } else if (Vector2D.class == object_class) {
-
+                    constructed_object = cli.handleVector2D(object_1, args, true);
+                    ((Vector2D) constructed_object).setName(name);
+                    message = (name + msg.arrow() + ((Vector2D) constructed_object).getComponentForm());
                 } else if (Point3D.class == object_class) {
-
+                    constructed_object = cli.handlePoint3D(object_1, args, true);
+                    ((Point3D) constructed_object).setName(name);
+                    message = (name + msg.arrow() + ((Point3D) constructed_object).getCoordinates());
                 } else if (Point2D.class == object_class) {
-
+                    constructed_object = cli.handlePoint2D(object_1, args, true);
+                    ((Point2D) constructed_object).setName(name);
+                    message = (name + msg.arrow() + ((Point2D) constructed_object).getCoordinates());
                 } else if (Plane3D.class == object_class) {
 
                 } else if (Line3D.class == object_class) {
