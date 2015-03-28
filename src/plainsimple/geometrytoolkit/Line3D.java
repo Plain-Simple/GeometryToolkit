@@ -15,6 +15,10 @@ public class Line3D {
         point = new Point3D(0,0,0);
         direction_vector = new Vector3D(p);
     }
+    /* returns equation of line */
+    public String getEquation() { // todo: finish
+        return "";
+    }
     /* returns name of Line */
     public String getName() { return name; }
     /* sets name of Line */
@@ -40,11 +44,11 @@ public class Line3D {
         14t = -25
         t = -25 / 14
         intersection = (4,3,7) + -25 / 14 <2,1,2> */
-        double t = (plane.getD() - (plane.getA() * point.getX() + plane.getB() * point.getY()
-        + plane.getC() * point.getZ())) / (plane.getA() * direction_vector.getX() + plane.getB() *
+        double t = (plane.getD() - (plane.getA() * point.x() + plane.getB() * point.y()
+        + plane.getC() * point.z())) / (plane.getA() * direction_vector.getX() + plane.getB() *
         direction_vector.getY() + plane.getC() * direction_vector.getZ());
-        return new Point3D(point.getX() + t * direction_vector.getX(), point.getY() + t * direction_vector.getY(),
-                point.getZ() + t * direction_vector.getZ());
+        return new Point3D(point.x() + t * direction_vector.getX(), point.y() + t * direction_vector.getY(),
+                point.z() + t * direction_vector.getZ());
     }
     /* calculates distances between line and point */
     public double distanceToPoint(Point3D point) {
