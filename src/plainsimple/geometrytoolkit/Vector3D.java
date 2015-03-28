@@ -1,9 +1,5 @@
 package plainsimple.geometrytoolkit;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Vector3D {
   private double x;
   private double y;
@@ -29,9 +25,9 @@ public class Vector3D {
   }
   /* constructs vector from point_1 to point_2 */
   public Vector3D(Point3D point_1, Point3D point_2) {
-    x = point_2.getX() - point_1.getX();
-    y = point_2.getY() - point_1.getY();
-    z = point_2.getZ() - point_1.getZ();
+    x = point_2.x() - point_1.x();
+    y = point_2.y() - point_1.y();
+    z = point_2.z() - point_1.z();
   }
   /* constructs vector perpendicular to plane */
   public Vector3D(Plane3D plane) {
@@ -39,23 +35,6 @@ public class Vector3D {
     x = plane.getA();
     y = plane.getB();
     z = plane.getC();
-  }
-  /* constructs Vector3D give String "<x,y,z>" */
-  public Vector3D constructFromString(String name, String args) {
-    ArrayList<Double> coordinates = new ArrayList<>();
-    Pattern parse_vector = Pattern.compile("\\D*(\\d+\\.*\\d*)\\D*");
-    Matcher matcher = parse_vector.matcher(args);
-    try {
-      while (matcher.find()) {
-        coordinates.add(Double.parseDouble(matcher.group(1)));
-      }
-      Vector3D new_vector3d = new Vector3D(name);
-      new_vector3d.setCoordinates(coordinates.get(0), coordinates.get(1),
-                                  coordinates.get(2));
-      return  new_vector3d;
-    } catch(Exception e) {
-      return null;
-    }
   }
   public void setCoordinates(double x_coord, double y_coord, double z_coord) {
     x = x_coord;
