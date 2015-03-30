@@ -32,48 +32,53 @@ class CLI {
   }
   private String getInput() {
     Println(msg.command_waiting());
-    final Scanner scanner = new Scanner(
-      System.in); //TODO: is it efficient to make a new scanner each time?
+    final Scanner scanner = new Scanner(System.in);
     return scanner.nextLine();
   }
   private void processInput(String user_input) {
     ArrayList<String> arguments = parseInput(user_input);
-    Println("Debugging: arguments are " + arguments);
     switch (arguments.get(0)) {
     case "help":
     case "Help":
-      help.handleHelp(arguments);
+      Println(help.handleHelp(arguments));
       break;
     case "list":
+    case "List":
         if(1 == arguments.size()) /* list all objects */
             Println(user_objects.list());
         else if(2 == arguments.size()) /* list objects of specified type */
             Println(user_objects.list(arguments.get(1)));
         else /* too many args */
-            Println(msg.parameter_error("list", 2));
+            Println(msg.max_parameter_error("list", 2));
       break;
     case "remove":
+    case "Remove":
         if(1 == arguments.size()) { /* remove all objects */
-            user_objects.clear();
+            Println(user_objects.clear());
             user_objects.writeObjects("GeometryToolkit_SavedObjects");
         } else if(2 == arguments.size()) { /* remove specified object */
-            user_objects.remove(arguments.get(1));
+            Println(user_objects.remove(arguments.get(1)));
         } else /* too many args */
-            Println(msg.parameter_error("remove", 2)); // todo: messages
+            Println(msg.max_parameter_error("remove", 2)); // todo: messages
         break;
     case "rename":
+    case "Rename":
+        if(3 == arguments.size()) {
+            Println(user_objects.rename(arguments.get(1), arguments.get(2)));
+        } else if(arguments.size() > 3) {
+            Println(msg.max_parameter_error("rename", 3));
+        } else {
+            Println(msg.min_parameter_error("rename", 3));
+        }
         break;
-
     default:
       loadObject(arguments);
     }
   }
   private void loadObject(ArrayList<String> arguments) {
     if (arguments.contains("=")) {
-        Println("Constructor detected");
         Constructor new_object = new Constructor(arguments);
         if(new_object.create()) {
-            Println("Object created successfully");
             user_objects.put(new_object.getName(), new_object.getObject());
             user_objects.writeObjects("GeometryToolkit_SavedObjects"); /* update file */
         }
@@ -98,7 +103,7 @@ class CLI {
         }
         Println((new GeometryObject(output)).toString());
       } catch (NullPointerException e) { /* arguments.get(0) not a valid object */
-        Println(msg.variable_error(arguments.get(0)));
+        Println(msg.var_does_not_exist(arguments.get(0)));
       }
     }
   }
@@ -128,8 +133,7 @@ class CLI {
           return vector_2;
         } catch(NullPointerException e) {
           /* return Error: "args.get(0)" is not defined */
-          return msg.error() + msg.double_quote() + msg.variable() +
-                 msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+          return msg.var_does_not_exist(args.get(0));
         } catch(IllegalArgumentException e) {
           return getTypeError(args.get(0), new String[] {msg.vector() + msg.three_d()});
         }
@@ -196,8 +200,7 @@ class CLI {
                     return vector_2;
                 } catch(NullPointerException e) {
           /* return Error: "args.get(0)" is not defined */
-                    return msg.error() + msg.double_quote() + msg.variable() +
-                            msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+                    return msg.var_does_not_exist(args.get(0));
                 } catch(IllegalArgumentException e) {
                     return getTypeError(args.get(0), new String[] {msg.vector() + msg.two_d()});
                 }
@@ -259,8 +262,7 @@ class CLI {
                     return point_2;
                 } catch (NullPointerException e) {
           /* return Error: "args.get(0)" is not defined */
-                    return msg.error() + msg.double_quote() + msg.variable() +
-                            msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+                    return msg.var_does_not_exist(args.get(0));
                 } catch (IllegalArgumentException e) {
                     return getTypeError(args.get(0), new String[]{msg.point() + msg.three_d()});
                 }
@@ -292,8 +294,7 @@ class CLI {
                     return point_2;
                 } catch (NullPointerException e) {
           /* return Error: "args.get(0)" is not defined */
-                    return msg.error() + msg.double_quote() + msg.variable() +
-                            msg.double_quote() + args.get(0) + msg.var_does_not_exist();
+                    return msg.var_does_not_exist(args.get(0));
                 } catch (IllegalArgumentException e) {
                     return getTypeError(args.get(0), new String[]{msg.point() + msg.two_d()});
                 }
