@@ -7,7 +7,7 @@ public interface Messages {
   @En("No input entered")
   String no_input();
 
-  @En("Waiting on command...")
+  @En("\nWaiting on command...")
   String command_waiting();
 
   @En("Vector ")
@@ -28,8 +28,8 @@ public interface Messages {
   @En("Variable ")
   String variable();
 
-  @En(" does not exist")
-  String var_does_not_exist();
+  @En("Error: Variable \"{0}\" does not exist")
+  String var_does_not_exist(String var_name);
 
   @En(" or constructor is invalid")
   String invalid_constructor();
@@ -183,15 +183,31 @@ public interface Messages {
        "<Point2D>  -  <Point2D>     Distance between points\n" +
        "<Point2D>  == <Point2D>     Returns whether points are equal\n")
     String point2d_help();
-  @En("Error: variable \"{0}\" does not exist")
-  String variable_error(String variable_name);
 
   @En("Error: argument \"{0}\" was not recognized")
   String object_not_recognized(String object);
 
     @En("Error: \"{0}\" takes a maximum of {1} parameters")
-    String parameter_error(String function, int max_parameters);
+    String max_parameter_error(String function, int max_parameters);
+
+    @En("Error: \"{0}\" takes a minimum of {1} parameter(s)")
+    String min_parameter_error(String function, int min_parameters);
 
     @En("Error: Class \"{0}\" not recognized")
     String class_not_recognized(String class_name);
+
+    @En("Variable \"{0}\" successfully renamed to \"{1}\"")
+    String rename_success(String original_name, String new_name);
+
+    @En("Variable \"{0}\" successfully removed")
+    String remove_success(String object_name);
+
+    @En("All variables cleared")
+    String clear_success();
+
+    @En("Error: Input required")
+    String input_required();
+
+    @En("No objects to show")
+    String no_objects();
 }
