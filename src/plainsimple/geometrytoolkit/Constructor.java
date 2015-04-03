@@ -24,7 +24,6 @@ public class Constructor {
     public Constructor(ArrayList<String> arguments) {
       /* collect constructor args in new list */
         name = arguments.get(arguments.indexOf("=") - 1);
-        System.out.println("name is " + name);
         for (int i = arguments.indexOf("=") + 1; i < arguments.size(); i++) {
             args.add(arguments.get(i));
         }
@@ -49,31 +48,24 @@ public class Constructor {
     /* attempts to create object and returns whether it was created successfully */
     public boolean create() {
         if(validName(name)) {
-            System.out.println("name is valid");
             try {
                 Object object_1 = stored_objects.get(args.get(0));
                 Class object_class = object_1.getClass();
                 if (Vector3D.class == object_class) { // todo: error handling
-                    constructed_object = cli.handleVector3D(object_1, args);
-                    ((Vector3D) constructed_object).setName(name);
-                    message = (name + msg.arrow() + ((Vector3D) constructed_object).getComponentForm());
+                    constructed_object = new GeometryObject(cli.handleVector3D(object_1, args));
                 } else if (Vector2D.class == object_class) {
-                    constructed_object = cli.handleVector2D(object_1, args);
-                    ((Vector2D) constructed_object).setName(name);
-                    message = (name + msg.arrow() + ((Vector2D) constructed_object).getComponentForm());
+                    constructed_object = new GeometryObject(cli.handleVector2D(object_1, args));
                 } else if (Point3D.class == object_class) {
-                    constructed_object = cli.handlePoint3D(object_1, args);
-                    ((Point3D) constructed_object).setName(name);
-                    message = (name + msg.arrow() + ((Point3D) constructed_object).getCoordinates());
+                    constructed_object = new GeometryObject(cli.handlePoint3D(object_1, args));
                 } else if (Point2D.class == object_class) {
-                    constructed_object = cli.handlePoint2D(object_1, args);
-                    ((Point2D) constructed_object).setName(name);
-                    message = (name + msg.arrow() + ((Point2D) constructed_object).getCoordinates());
+                    constructed_object = new GeometryObject(cli.handlePoint2D(object_1, args));
                 } else if (Plane3D.class == object_class) {
 
                 } else if (Line3D.class == object_class) {
 
                 }
+                ((GeometryObject) constructed_object).setName(name);
+                message = (name + msg.arrow() + ((GeometryObject) constructed_object).toString());
                 return true;
             } catch (NullPointerException e) { // todo: error messages
                 message = (msg.error_creating_object() + msg.double_quote() + name
@@ -85,8 +77,8 @@ public class Constructor {
     }
     /* checks to make sure name for new object is valid */
     private boolean validName(String name) {
-        /* rules: must contain alphanumeric characters only */
-        Pattern pattern = Pattern.compile("\\W+");
+        /* rules: must contain letters only */
+        Pattern pattern = Pattern.compile("[^a-zA-Z]");
         Matcher matcher = pattern.matcher(name);
         return (!matcher.find()); /* if found, return false. Otherwise true */
     }

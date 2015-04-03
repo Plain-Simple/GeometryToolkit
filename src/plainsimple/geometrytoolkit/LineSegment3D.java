@@ -10,21 +10,21 @@ public class LineSegment3D {
   String name;
   /* initializes line segment using two points */
   public LineSegment3D(Point3D start, Point3D end) {
-    x1 = start.getX();
-    y1 = start.getY();
-    z1 = start.getZ();
-    x2 = end.getX();
-    y2 = end.getY();
-    z2 = end.getZ();
+    x1 = start.x();
+    y1 = start.y();
+    z1 = start.z();
+    x2 = end.x();
+    y2 = end.y();
+    z2 = end.z();
   }
   /* initializes line segment using vector */
   public LineSegment3D(Vector3D vector) {
     x1 = 0.0;
     y1 = 0.0;
     z1 = 0.0;
-    x2 = vector.getX();
-    y2 = vector.getY();
-    z2 = vector.getZ();
+    x2 = vector.x();
+    y2 = vector.y();
+    z2 = vector.z();
   }
   /* returns length of segment */
   public double getLength() {

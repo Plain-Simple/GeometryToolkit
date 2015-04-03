@@ -25,10 +25,10 @@ public class Help {
                 case "Point2d":
                     return point2dHelp();
                 default:
-                    return (msg.variable_error(args.get(1)));
+                    return (msg.var_does_not_exist(args.get(1)));
             }
         } else
-            return msg.parameter_error("help", 2);
+            return msg.max_parameter_error("help", 2);
     }
     private String generalHelp() {
         return msg.general_help();

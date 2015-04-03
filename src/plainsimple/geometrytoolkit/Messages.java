@@ -67,11 +67,9 @@ public interface Messages {
   @En(" is not equal to ")
   String not_equal_to();
 
-  @En("Argument ")
-  String argument();
+  @En("Error: Argument \"{0}\" not recognized")
+  String arg_not_recognized(String arg_name);
 
-  @En(" was not recognized")
-  String not_recognized();
 
     @En(" -> ")
     String arrow();
@@ -210,4 +208,28 @@ public interface Messages {
 
     @En("No objects to show")
     String no_objects();
+
+    @En("Error: {0} index \"{1}\" is out of bounds")
+    String index_out_of_bounds(String object, String index);
+
+    @En("Matrix")
+    String matrix();
+
+    @En(",")
+    String comma();
+
+    @En("Size Error: Matrices cannot be {0}")
+    String matrices_size_error(String function);
+
+    @En("multiplied")
+    String multiplied();
+
+    @En("added")
+    String added();
+
+    @En("merged")
+    String merged();
+
+    @En("inverted")
+    String inverted();
 }

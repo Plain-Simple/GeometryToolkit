@@ -15,7 +15,7 @@ class CLI {
     private static final Help help = new Help();
   /* regex pattern used to parse user input */
   private final Pattern user_command_pattern =
-    Pattern.compile("([^\\s\"\']+)|\"([^\"]*)\"|\'([^\']*)\'");
+    Pattern.compile("([^\\s\\^\\*/\\!\\%]+)|([\\^\\*/\\!\\%])|(->)");
 
   public void startCLI() {
       user_objects.loadObjects("GeometryToolkit_SavedObjects");
@@ -36,6 +36,7 @@ class CLI {
     return scanner.nextLine();
   }
   private void processInput(String user_input) {
+    System.out.print(">> ");
     ArrayList<String> arguments = parseInput(user_input);
     switch (arguments.get(0)) {
     case "help":
@@ -76,7 +77,7 @@ class CLI {
     }
   }
   private void loadObject(ArrayList<String> arguments) {
-    if (arguments.contains("=")) {
+    if (arguments.contains("=") || arguments.contains("->")) {
         Constructor new_object = new Constructor(arguments);
         if(new_object.create()) {
             user_objects.put(new_object.getName(), new_object.getObject());
@@ -98,6 +99,8 @@ class CLI {
             output = handlePoint3D(referenced_object, arguments);
           } else if(object_class.equals(Point2D.class)) {
             output = handlePoint2D(referenced_object, arguments);
+          } else if(object_class.equals(Double.class)) {
+              output = referenced_object;
           }
         } catch(IllegalArgumentException e) {
         }
@@ -114,9 +117,9 @@ class CLI {
     while(matcher.find()) {
       if(null != matcher.group(1)) { /* argument is space-separated */
         arguments.add(matcher.group(1));
-      } else if(null != matcher.group(2)) { /* argument is enclosed in double-quotes */
+      } else if(null != matcher.group(2)) {
         arguments.add(matcher.group(2));
-      } else if(null != matcher.group(3)) { /* argument is enclosed in single-quotes */
+      } else if(null != matcher.group(3)) {
         arguments.add(matcher.group(3));
       }
     }
@@ -166,12 +169,12 @@ class CLI {
         Object object_2 = user_objects.get(args.get(2));
         if(object_2.getClass().equals(Vector3D.class)) { /* vector dot product */
           return vector_1.dot((Vector3D) object_2);
-        } else if(object_2.getClass().equals(Double.class)) { /* scalar multiplication */
+        } else if(object_2.getClass().equals(Double.class) || object_2.getClass().equals(double.class)) { /* scalar multiplication */
           return vector_1.multiplyScalar((double) object_2);
         } else {
-          return getTypeError(args.get(2), new String[] {msg.type_double(),
-                              msg.type_int(), msg.vector() + msg.three_d()
-                                                        });
+          return getTypeError(args.get(2), new String[]{msg.type_double(),
+                  msg.type_int(), msg.vector() + msg.three_d()
+          });
         }
       case "x":
         return vector_1.cross(vector_2);
@@ -182,10 +185,9 @@ class CLI {
       case "|_": /* are vectors perpendicular */
         return vector_1.isPerpendicular(vector_2);
       case "==": /* are vectors equal */
-        return Objects.equals(vector_1, vector_2); // todo: fix
+        return vector_1.vectorEquals(vector_2);
       default: /* return "Argument 'argument' was not recognized" */
-        return msg.argument() + msg.space() + msg.double_quote() + args.get(
-                 1) + msg.not_recognized();
+        return msg.arg_not_recognized(args.get(1));
       }
     }
     return msg.generic_error();
@@ -230,12 +232,12 @@ class CLI {
                     return vector_1.addVector(vector_2.multiplyScalar(-1));
                 case "*":
                     Object object_2 = user_objects.get(args.get(2));
-                    if(object_2.getClass().equals(Vector2D.class)) { /* vector dot product */
+                    if (object_2.getClass().equals(Vector2D.class)) { /* vector dot product */
                         return vector_1.dot((Vector2D) object_2);
-                    } else if(object_2.getClass().equals(Double.class)) { /* scalar multiplication */
+                    } else if (object_2.getClass().equals(Double.class)) { /* scalar multiplication */
                         return vector_1.multiplyScalar((double) object_2);
                     } else {
-                        return getTypeError(args.get(2), new String[] {msg.type_double(),
+                        return getTypeError(args.get(2), new String[]{msg.type_double(),
                                 msg.type_int(), msg.vector() + msg.three_d()
                         });
                     }
@@ -248,8 +250,7 @@ class CLI {
                 case "==": /* are vectors equal */
                     return vector_1.equals(vector_2);
                 default: /* return "Argument 'argument' was not recognized" */
-                    return msg.argument() + msg.space() + msg.double_quote() + args.get(
-                            1) + msg.not_recognized();
+                    return msg.arg_not_recognized(args.get(1));
             }
         }
         return msg.generic_error();
@@ -282,6 +283,8 @@ class CLI {
                     return point_1.getDistance(point_2);
                 case "==":
                     return point_1.equals(point_2);
+                default:
+                    return msg.arg_not_recognized(args.get(1));
             }
         }
         return  msg.generic_error();
@@ -313,6 +316,8 @@ class CLI {
                     return point_1.getDistance(point_2);
                 case "==":
                     return point_1.equals(point_2);
+                default:
+                    return msg.arg_not_recognized(args.get(1));
             }
         }
         return  msg.generic_error();

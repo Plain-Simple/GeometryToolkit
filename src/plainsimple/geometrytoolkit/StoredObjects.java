@@ -25,7 +25,11 @@ public class StoredObjects { // todo: constructor that takes filename?
     }
     /* puts object in user_objects hashtable */
     public void put(String key, Object object) {
-        user_objects.put(key, object);
+        try {
+            user_objects.put(key, object);
+        } catch(NullPointerException e) { // todo: error messages
+
+        }
     }
     /* returns String listing all objects (for list() command) */
     public String list() {

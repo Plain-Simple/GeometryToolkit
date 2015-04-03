@@ -8,17 +8,17 @@ public class LineSegment2D {
   String name;
   /* initializes line segment using two points */
   public LineSegment2D(Point2D start, Point2D end) {
-    x1 = start.getX();
-    y1 = start.getY();
-    x2 = end.getX();
-    y2 = end.getY();
+    x1 = start.x();
+    y1 = start.y();
+    x2 = end.x();
+    y2 = end.y();
   }
   /* initializes line segment using vector */
   public LineSegment2D(Vector2D vector) {
     x1 = 0.0;
     y1 = 0.0;
-    x2 = vector.getX();
-    y2 = vector.getY();
+    x2 = vector.x();
+    y2 = vector.y();
   }
   /* returns length of segment */
   public double getLength() {

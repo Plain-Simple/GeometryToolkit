@@ -2,8 +2,6 @@
 getting Object names */
 package plainsimple.geometrytoolkit;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,6 +113,23 @@ public class GeometryObject {
         }
         return ""; // todo: better way?
     }
+    /* sets name of object */
+    public void setName(String new_name) {
+        Class object_class = object.getClass();
+        if(object_class.equals(Vector3D.class)) {
+            ((Vector3D) object).setName(new_name);
+        } else if(object_class.equals(Vector2D.class)) {
+            ((Vector2D) object).setName(new_name);
+        } else if(object_class.equals(Point3D.class)) {
+            ((Point3D) object).setName(new_name);
+        } else if(object_class.equals(Point2D.class)) {
+            ((Point2D) object).setName(new_name);
+        } else if(object_class.equals(Plane3D.class)) {
+            ((Plane3D) object).setName(new_name);
+        } else if(object_class.equals(Line3D.class)) {
+            ((Line3D) object).setName(new_name);
+        }
+    }
     /* returns String representation of object */
     public String toString() {
         Class object_class = object.getClass();
@@ -131,6 +146,8 @@ public class GeometryObject {
         } else if(object_class.equals(Line3D.class)) {
             return ((Line3D) object).getEquation();
         } else if(object_class.equals(Double.class)) {
+            return Double.toString((Double) object);
+        } else if(object_class.equals(double.class)) {
             return Double.toString((double) object);
         } else if(object_class.equals(String.class)) {
             return (String) object;

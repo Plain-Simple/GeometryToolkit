@@ -1,17 +1,11 @@
 package plainsimple.geometrytoolkit;
 
 public class Vector3D {
-  private double x;
-  private double y;
-  private double z;
-  private String name;
-  /* simplest constructor, sets all values to zero */
-  public Vector3D() {
-    x = 0.0;
-    y = 0.0;
-    z = 0.0;
-    name = "";
-  }
+  private double x = 0.0;
+  private double y = 0.0;
+  private double z = 0.0;
+  private String name = "";
+  public Vector3D() {}
   public Vector3D(double x, double y, double z) {
     this.x = x;
     this.y = y;
@@ -23,6 +17,11 @@ public class Vector3D {
     z = 0.0;
     this.name = name;
   }
+  public Vector3D(Vector3D v1, Vector3D v2) {
+      x = v2.x() - v1.x();
+      y = v2.x() - v1.x();
+      z = v2.x() - v1.x();
+  }
   /* constructs vector from point_1 to point_2 */
   public Vector3D(Point3D point_1, Point3D point_2) {
     x = point_2.x() - point_1.x();
@@ -32,9 +31,9 @@ public class Vector3D {
   /* constructs vector perpendicular to plane */
   public Vector3D(Plane3D plane) {
     /* will have component form <a, b, c> */
-    x = plane.getA();
-    y = plane.getB();
-    z = plane.getC();
+    x = plane.a();
+    y = plane.b();
+    z = plane.c();
   }
   public void setCoordinates(double x_coord, double y_coord, double z_coord) {
     x = x_coord;
@@ -53,15 +52,15 @@ public class Vector3D {
     return "<" + x + ", " + y + ", " + z + ">";
   }
   /* returns x value of vector */
-  public Double getX() {
+  public Double x() {
     return x;
   }
   /* returns y value of vector */
-  public Double getY() {
+  public Double y() {
     return y;
   }
   /* returns z value of vector */
-  public Double getZ() {
+  public Double z() {
     return z;
   }
   /* gets direction vector */
@@ -79,19 +78,19 @@ public class Vector3D {
   }
   /* adds vectors */
   public Vector3D addVector(Vector3D vector_2) {
-    return new Vector3D(x + vector_2.getX(), y + vector_2.getY(),
-                        z + vector_2.getZ());
+    return new Vector3D(x + vector_2.x(), y + vector_2.y(),
+                        z + vector_2.z());
   }
   /* returns dot product of vector and vector_2 */
   public double dot(Vector3D vector_2) {
-    return (x * vector_2.getX()) + (y * vector_2.getY()) + (z * vector_2.getZ());
+    return (x * vector_2.x()) + (y * vector_2.y()) + (z * vector_2.z());
   }
   /* returns cross product of vector and vector_2 */
   public Vector3D cross(Vector3D vector_2) {
     return new Vector3D(
-             (y * vector_2.getZ()) - (z * vector_2.getY()),
-             (z * vector_2.getX()) - (x * vector_2.getZ()),
-             (x * vector_2.getY()) - (y * vector_2.getX()));
+             (y * vector_2.z()) - (z * vector_2.y()),
+             (z * vector_2.x()) - (x * vector_2.z()),
+             (x * vector_2.y()) - (y * vector_2.x()));
   }
   /* returns magnitude of vector */
   public double getMagnitude() {
@@ -99,19 +98,21 @@ public class Vector3D {
   }
   /* returns angle between two vectors */
   public double getAngle(Vector3D vector_2) { // ToDo: angle class??
-    return Math.acos(
-             (dot(vector_2) /* numerator */
+    return Math.acos((dot(vector_2) /* numerator */
               / getMagnitude()) * vector_2.getMagnitude()); /* denominator */
   }
   /* returns whether this vector is parallel */
-  public boolean isParallel(Vector3D vector_2) {
+  public boolean isParallel(Vector3D vector_2) { // todo: fix
     // todo: figure out what to do when dividing by zero
+      /* for simplicity and to avoid dividing by zero */
+      if((vector_2.x() == 0 && vector_2.y() == 0 && vector_2.z() == 0) ||
+              (x == 0 && y == 0 && z == 0))
+          return true;
     try {
-      double factor = x / vector_2.getX();
-      return (((y / vector_2.getY()) == factor) && ((z / vector_2.getZ()) == factor));
+      double factor = x / vector_2.x();
+      return (((y / vector_2.y()) == factor) && ((z / vector_2.z()) == factor));
     } catch(Exception e) {
-      System.out.println("Division by zero in Vector2D.isParallel");
-      return false; /* is it always false? We need to figure out what to do in this case */
+      return false;
     }
   }
   /* returns whether this vector is perpendicular */
@@ -119,16 +120,16 @@ public class Vector3D {
     return (0 == dot(vector_2));
   }
   /* returns whether this vector is equal */
-  public boolean equals(Vector3D vector_2) {
-    return ((x == vector_2.getX()) && (y == vector_2.getY())
-            && (z == vector_2.getZ()));
+  public boolean vectorEquals(Vector3D v) {
+    return ((x == v.x()) && (y == v.y())
+            && (z == v.z()));
   }
   /* returns vector projected onto vector_2 */
   public Vector3D getProjection(Vector3D vector_2) {
     /* p = v1((v1 * v2) / (|v2|*|v2|)) */
     double multiplier = dot(vector_2) / (Math.pow((vector_2.getMagnitude()), 2));
-    return new Vector3D(getX() * multiplier, getY() * multiplier,
-                        getZ() * multiplier);
+    return new Vector3D(x() * multiplier, y() * multiplier,
+                        z() * multiplier);
   }
     /* returns a vector perpendicular to this one */
     public Vector3D getPerpendicular() { // todo: learn matrices

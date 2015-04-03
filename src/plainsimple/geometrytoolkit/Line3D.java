@@ -44,11 +44,11 @@ public class Line3D {
         14t = -25
         t = -25 / 14
         intersection = (4,3,7) + -25 / 14 <2,1,2> */
-        double t = (plane.getD() - (plane.getA() * point.x() + plane.getB() * point.y()
-        + plane.getC() * point.z())) / (plane.getA() * direction_vector.getX() + plane.getB() *
-        direction_vector.getY() + plane.getC() * direction_vector.getZ());
-        return new Point3D(point.x() + t * direction_vector.getX(), point.y() + t * direction_vector.getY(),
-                point.z() + t * direction_vector.getZ());
+        double t = (plane.d() - (plane.a() * point.x() + plane.b() * point.y()
+        + plane.c() * point.z())) / (plane.a() * direction_vector.x() + plane.b() *
+        direction_vector.y() + plane.c() * direction_vector.z());
+        return new Point3D(point.x() + t * direction_vector.x(), point.y() + t * direction_vector.y(),
+                point.z() + t * direction_vector.z());
     }
     /* calculates distances between line and point */
     public double distanceToPoint(Point3D point) {

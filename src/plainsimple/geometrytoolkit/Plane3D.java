@@ -20,17 +20,17 @@ public class Plane3D {
     Vector3D AC = new Vector3D(A, C);
     /* get vector perpendicular to both ab and ac */
     Vector3D cross = AB.cross(AC);
-    a = cross.getX();
-    b = cross.getY();
-    c = cross.getZ();
+    a = cross.x();
+    b = cross.y();
+    c = cross.z();
     /* use coordinates of Point A to determine equation of plane */
     d = (a * A.x()) + (b * A.y()) + (c * A.z());
   }
   /* constructs plane using a point and a vector perpendicular to the plane */
   public Plane3D(Vector3D vector, Point3D point) {
-    a = vector.getX();
-    b = vector.getY();
-    c = vector.getZ();
+    a = vector.x();
+    b = vector.y();
+    c = vector.z();
     d = (a * point.x()) + (b * point.y()) + (c * point.z());
   }
   /* returns a */
@@ -59,7 +59,7 @@ public class Plane3D {
   }
   /* returns whether plane contains vector */
   public boolean containsVector(Vector3D vector) {
-    return ((a * vector.getX()) + (b * vector.getY()) + (c * vector.getZ())) == d;
+    return ((a * vector.x()) + (b * vector.y()) + (c * vector.z())) == d;
   }
     /* returns Cartesian equation of plane */
     public String getCartesianEquation() { // todo: finish
