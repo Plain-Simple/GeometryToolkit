@@ -22,6 +22,11 @@ public class Vector3D {
       y = v2.x() - v1.x();
       z = v2.x() - v1.x();
   }
+  public Vector3D(Vector3D v, Point3D p) {
+      x = p.x() - v.x();
+      y = p.y() - v.y();
+      z = p.z() - v.z();
+  }
   /* constructs vector from point_1 to point_2 */
   public Vector3D(Point3D point_1, Point3D point_2) {
     x = point_2.x() - point_1.x();

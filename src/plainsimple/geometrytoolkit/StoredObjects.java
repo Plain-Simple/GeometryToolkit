@@ -40,7 +40,7 @@ public class StoredObjects { // todo: constructor that takes filename?
         while (objects.hasMoreElements()) {
             String object_name = objects.nextElement();
             result += object_name + " -> " +
-                    (new GeometryObject(user_objects.get(object_name))).toString() + "\n";
+                    (new GeometryObject(user_objects.get(object_name))).getString() + "\n";
         }
         return result;
     }
@@ -84,7 +84,7 @@ public class StoredObjects { // todo: constructor that takes filename?
             String object_name = objects.nextElement();
             if(user_objects.get(object_name).getClass().equals(list_class)) {
                 result += object_name + " -> " +
-                        (new GeometryObject(user_objects.get(object_name))).toString() + "\n";
+                        (new GeometryObject(user_objects.get(object_name))).getString() + "\n";
                 object_counter++;
             }
         }
@@ -148,7 +148,7 @@ public class StoredObjects { // todo: constructor that takes filename?
                 String object_name = objects.nextElement();
                 /* write in format "object_name: StringRepresentation" */
                 write_objects.write(object_name + ": " +
-                        (new GeometryObject(user_objects.get(object_name))).toString());
+                        (new GeometryObject(user_objects.get(object_name))).getString());
                 write_objects.newLine();
             }
             write_objects.close();

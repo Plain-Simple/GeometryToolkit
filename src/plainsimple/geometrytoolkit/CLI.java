@@ -15,7 +15,7 @@ class CLI {
     private static final Help help = new Help();
   /* regex pattern used to parse user input */
   private final Pattern user_command_pattern =
-    Pattern.compile("([^\\s\\^\\*/\\!\\%]+)|([\\^\\*/\\!\\%])|(->)");
+    Pattern.compile("([^\\s\\^\\*/\\!\\%\\+\\-[->][==]]+)|([\\^\\*/\\!\\%\\+\\-[->][==]])");
 
   public void startCLI() {
       user_objects.loadObjects("GeometryToolkit_SavedObjects");
@@ -72,12 +72,21 @@ class CLI {
             Println(msg.min_parameter_error("rename", 3));
         }
         break;
+    case "New":
+    case "new":
+        if(2 == arguments.size()) {
+
+        } else if(arguments.size() > 2) {
+            Println(msg.max_parameter_error("new", 2));
+        } else {
+            Println(msg.min_parameter_error("new", 2));
+        }
     default:
       loadObject(arguments);
     }
   }
   private void loadObject(ArrayList<String> arguments) {
-    if (arguments.contains("=") || arguments.contains("->")) {
+    if (arguments.contains("=")) {
         Constructor new_object = new Constructor(arguments);
         if(new_object.create()) {
             user_objects.put(new_object.getName(), new_object.getObject());
@@ -101,10 +110,12 @@ class CLI {
             output = handlePoint2D(referenced_object, arguments);
           } else if(object_class.equals(Double.class)) {
               output = referenced_object;
+          } else if(object_class.equals(GeometryObject.class)) {
+              output = ((GeometryObject) referenced_object).getString();
           }
         } catch(IllegalArgumentException e) {
         }
-        Println((new GeometryObject(output)).toString());
+        Println((new GeometryObject(output)).getString());
       } catch (NullPointerException e) { /* arguments.get(0) not a valid object */
         Println(msg.var_does_not_exist(arguments.get(0)));
       }
@@ -173,8 +184,7 @@ class CLI {
           return vector_1.multiplyScalar((double) object_2);
         } else {
           return getTypeError(args.get(2), new String[]{msg.type_double(),
-                  msg.type_int(), msg.vector() + msg.three_d()
-          });
+                  msg.type_int(), msg.vector() + msg.three_d()});
         }
       case "x":
         return vector_1.cross(vector_2);
@@ -186,6 +196,13 @@ class CLI {
         return vector_1.isPerpendicular(vector_2);
       case "==": /* are vectors equal */
         return vector_1.vectorEquals(vector_2);
+      case "->": /* constructor from vector to vector or vector to point */
+          object_2 = user_objects.get(args.get(2));
+          if(object_2.getClass().equals(Vector3D.class)) {
+              return new Vector3D(vector_1, (Vector3D) object_2);
+          } else if(object_2.getClass().equals(Point3D.class)) {
+              return new Vector3D(vector_1, (Point3D) object_2);
+          }
       default: /* return "Argument 'argument' was not recognized" */
         return msg.arg_not_recognized(args.get(1));
       }
@@ -194,7 +211,6 @@ class CLI {
   }
     public Object handleVector2D(Object vector_2d, ArrayList<String> args) {
     /* if constructor == true, need to pass a Vector2D object. Otherwise pass String */
-        // todo: try-catch IllegalArgumentException. Allow constructor Point2D->Point2D. Implement remaining functions
         Vector2D vector_1 = (Vector2D) vector_2d;
         if(1 == args.size()) { /* syntax is <Objectname> */
                 try {
@@ -248,7 +264,14 @@ class CLI {
                 case "|_": /* are vectors perpendicular */
                     return vector_1.isPerpendicular(vector_2);
                 case "==": /* are vectors equal */
-                    return vector_1.equals(vector_2);
+                    return vector_1.vectorEquals(vector_2);
+                case "->":
+                    object_2 = user_objects.get(args.get(2));
+                    if(object_2.getClass().equals(Vector2D.class)) {
+                        return new Vector2D(vector_1, (Vector2D) object_2);
+                    } else if(object_2.getClass().equals(Point2D.class)) {
+                        return new Vector2D(vector_1, (Point2D) object_2);
+                    }
                 default: /* return "Argument 'argument' was not recognized" */
                     return msg.arg_not_recognized(args.get(1));
             }
@@ -271,7 +294,6 @@ class CLI {
         if (3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
             String operator = args.get(1);
             Point3D point_2 = new Point3D();
-            Double d = new Double(0.0);
             switch (operator) { /* all these operations require a second Vector3D */
                 case "-":
                 case "==":
@@ -283,6 +305,14 @@ class CLI {
                     return point_1.getDistance(point_2);
                 case "==":
                     return point_1.equals(point_2);
+                case "->":
+                    Object object_2 = user_objects.get(args.get(2));
+                    if(object_2.getClass().equals(Vector3D.class)) {
+                        return new Vector3D((Vector3D) object_2, point_1);
+                    } else if(object_2.getClass().equals(Point3D.class)) {
+                        return new Vector3D((Point3D) object_2, point_1);
+                    }
+                    break;
                 default:
                     return msg.arg_not_recognized(args.get(1));
             }
@@ -316,6 +346,12 @@ class CLI {
                     return point_1.getDistance(point_2);
                 case "==":
                     return point_1.equals(point_2);
+                case "->":
+                    Object object_2 = user_objects.get(args.get(2));
+                    if(object_2.getClass().equals(Vector2D.class)) {
+                        return new Vector2D((Vector2D) object_2, point_1);
+                    } //else if(object_2.getClass().equals(Point2D.class)) {
+                      //  return new Vector2D((Point2D) object_2, point_1);
                 default:
                     return msg.arg_not_recognized(args.get(1));
             }

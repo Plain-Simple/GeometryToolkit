@@ -52,20 +52,21 @@ public class Constructor {
                 Object object_1 = stored_objects.get(args.get(0));
                 Class object_class = object_1.getClass();
                 if (Vector3D.class == object_class) { // todo: error handling
-                    constructed_object = new GeometryObject(cli.handleVector3D(object_1, args));
+                    constructed_object = cli.handleVector3D(object_1, args);
                 } else if (Vector2D.class == object_class) {
-                    constructed_object = new GeometryObject(cli.handleVector2D(object_1, args));
+                    constructed_object = cli.handleVector2D(object_1, args);
                 } else if (Point3D.class == object_class) {
-                    constructed_object = new GeometryObject(cli.handlePoint3D(object_1, args));
+                    constructed_object = cli.handlePoint3D(object_1, args);
                 } else if (Point2D.class == object_class) {
-                    constructed_object = new GeometryObject(cli.handlePoint2D(object_1, args));
+                    constructed_object = cli.handlePoint2D(object_1, args);
                 } else if (Plane3D.class == object_class) {
 
                 } else if (Line3D.class == object_class) {
 
                 }
-                ((GeometryObject) constructed_object).setName(name);
-                message = (name + msg.arrow() + ((GeometryObject) constructed_object).toString());
+                GeometryObject this_object = new GeometryObject(constructed_object);
+                this_object.setName(name);
+                message = (name + msg.arrow() + this_object.getString());
                 return true;
             } catch (NullPointerException e) { // todo: error messages
                 message = (msg.error_creating_object() + msg.double_quote() + name

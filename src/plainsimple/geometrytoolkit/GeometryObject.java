@@ -14,9 +14,7 @@ public class GeometryObject {
     public GeometryObject(String s) {
         constructor = s;
     }
-    public GeometryObject(Object o) {
-        object = o;
-    }
+    public GeometryObject(Object o) { object = o; }
     /* returns stored object */
     public Object getObject() { return object; }
     /* checks whether s is syntax for a geometry object */
@@ -131,7 +129,7 @@ public class GeometryObject {
         }
     }
     /* returns String representation of object */
-    public String toString() {
+    public String getString() {
         Class object_class = object.getClass();
         if(object_class.equals(Vector3D.class)) {
             return ((Vector3D) object).getComponentForm();

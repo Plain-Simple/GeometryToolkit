@@ -19,9 +19,17 @@ public class Vector2D {
     y = 0.0;
     this.name = name;
   }
-  public void setCoordinates(double x_coord, double y_coord) {
-    x = x_coord;
-    y = y_coord;
+  public Vector2D(Vector2D v1, Vector2D v2) {
+      x = v2.x() - v1.x();
+      y = v2.y() - v1.y();
+  }
+  public Vector2D(Vector2D v, Point2D p) {
+      x = p.x() - v.x();
+      y = p.y() - v.y();
+  }
+  public void setCoordinates(double x, double y) {
+    this.x = x;
+    this.y = y;
   }
   public void setName(String new_name) {
     name = new_name;
@@ -39,9 +47,7 @@ public class Vector2D {
     return x;
   }
   /* returns y value of vector */
-  public Double y() {
-    return y;
-  }
+  public Double y() { return y; }
   /* gets direction vector */
   public Vector2D getDirection() {
     double magnitude = getMagnitude();
@@ -91,7 +97,7 @@ public class Vector2D {
     return (0 == dot(vector_2));
   }
   /* returns whether this vector is equal */
-  public boolean equals(Vector2D vector_2) {
+  public boolean vectorEquals(Vector2D vector_2) {
     return (x == vector_2.x()) && (y == vector_2.y());
   }
 }
