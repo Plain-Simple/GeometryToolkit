@@ -9,15 +9,25 @@ public class Matrix {
     private ArrayList<RowVector> rows = new ArrayList<>();
     /* number of elements per row */
     private int row_size;
-    /* sets row size */
+    /* name of matrix */
+    private String name;
     /* used to access C10N messages */
     private static final Messages msg = C10N.get(Messages.class);
+    /* matrix constructor with name. row_size must be set before use! */
+    public Matrix(String name) { this.name = name; row_size = 0; }
+    /* matrix constructor that sets size */
     public Matrix(int size) { row_size = size; }
+    /* matrix constructor with an arraylist of RowVectors */
     public Matrix(ArrayList<RowVector> rows) { this.rows = rows; }
-
+    /* returns name of matrix */
+    public String getName() { return name; }
+    /* sets name of matrix */
+    public void setName(String new_name) { name = new_name; }
+    /* sets row size. */ // todo: validation. Don't allow change unless current size = 0
+    public void setSize(int size) { row_size = size; }
     /* sets element at index (row, col) */
     public void setElement(int row, int col, double new_value) throws IndexOutOfBoundsException {
-        if(row > rows() || col > columns())
+        if(row >= rows() || col >= columns())
             throw new IndexOutOfBoundsException
                     (msg.index_out_of_bounds(msg.matrix(), row + msg.comma() + col));
         else
@@ -33,7 +43,7 @@ public class Matrix {
     }
     /* returns element at index (row, col) */
     public double get(int row, int col) throws IndexOutOfBoundsException {
-        if(row > rows() || col > columns())
+        if(row >= rows() || col >= columns())
             throw new IndexOutOfBoundsException
                     (msg.index_out_of_bounds(msg.matrix(), row + msg.comma() + col));
         else
@@ -48,8 +58,11 @@ public class Matrix {
         }
     }
     /* adds row to matrix */
-    public void addRow(RowVector new_row) {
+    public void addRow(RowVector new_row) throws IndexOutOfBoundsException {
+        if(new_row.size() != row_size)
+            throw new IndexOutOfBoundsException("Error: row size does not match"); // todo: C10N
         rows.add(new_row);
+        System.out.println("Matrix has " + rows() + " rows");
     }
     /* matrix addition */
     public Matrix add(Matrix m) throws IndexOutOfBoundsException {
@@ -164,13 +177,27 @@ public class Matrix {
         }
         return result;
     }
+    /* returns String representation of matrix */
+    public String getString() { // todo: ensure even columns (padding)
+        String result = "";
+        for(int i = 0; i < rows(); i++) {
+            result += "[";
+            for(int j = 0; j < columns(); j++)
+                result += get(i, j) + " ";
+            result += "]\n";
+        }
+        return result;
+    }
     /* returns number of rows in matrix */
     public int rows() {
-        return row_size;
+        return rows.size();
     }
     /* returns number of columns in matrix */
     public int columns() {
-        return rows.get(0).size();
+        if(rows.size() == 0)
+            return 0;
+        else
+            return rows.get(0).size();
     }
     /* returns whether matrices have the same dimensions */
     public boolean sameSize(Matrix m) {

@@ -22,6 +22,7 @@ class CLI {
       Println(msg.program_full_name());
     String user_input;
     do {
+      Println(msg.command_waiting());
       user_input = getInput();
       if(user_input.isEmpty()) {
         Println(msg.no_input());
@@ -31,7 +32,6 @@ class CLI {
     } while (!user_input.equals("exit"));
   }
   private String getInput() {
-    Println(msg.command_waiting());
     final Scanner scanner = new Scanner(System.in);
     return scanner.nextLine();
   }
@@ -75,12 +75,16 @@ class CLI {
     case "New":
     case "new":
         if(2 == arguments.size()) {
-
+            switch(arguments.get(1)) {
+                case "Matrix":
+                    MatrixConstructor();
+            }
         } else if(arguments.size() > 2) {
             Println(msg.max_parameter_error("new", 2));
         } else {
             Println(msg.min_parameter_error("new", 2));
         }
+    break;
     default:
       loadObject(arguments);
     }
@@ -369,6 +373,40 @@ class CLI {
       result += msg.or() + required_types[i];
     }
     return result;
+  }
+  private void MatrixConstructor() {
+      int row_counter = 1;
+      boolean keepGoing = true;
+      Println("Enter name of matrix to be created: ");
+      String name = getInput();
+      Matrix new_matrix = new Matrix(name);
+      while(keepGoing) {
+          try {
+              Println("Enter row " + row_counter + " (space-separated):");
+              ArrayList<String> next_row = parseInput(getInput());
+              if (next_row.isEmpty()) {
+                  keepGoing = false;
+              } else {
+                  RowVector args = new RowVector();
+                  for (int i = 0; i < next_row.size(); i++)
+                      args.addElement(Double.parseDouble(next_row.get(i)));
+                  if (row_counter == 1) {
+                      new_matrix.setSize(args.size());
+                  }
+                  new_matrix.addRow(args);
+                  user_objects.put(name, new_matrix);
+                  row_counter++;
+                  keepGoing = true;
+              }
+          } catch(IndexOutOfBoundsException e) { // todo: C10N
+              Println("Exception!");
+              Println(e.getMessage());
+          } catch(NumberFormatException e) {
+              Println("All entries must be numbers!");
+              Println(e.getMessage());
+          }
+          Println(new_matrix.getString());
+      }
   }
   private void Println(String s) {
     System.out.println(s);

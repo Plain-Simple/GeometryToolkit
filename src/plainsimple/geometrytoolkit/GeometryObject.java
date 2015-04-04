@@ -19,9 +19,9 @@ public class GeometryObject {
     public Object getObject() { return object; }
     /* checks whether s is syntax for a geometry object */
     public boolean isObject() {
-        boolean valid_object = false;
+        boolean valid_object;
         /* account for possibility that user has entered |vector| */
-        if(constructor.startsWith("|") && constructor.endsWith("|")) { // todo: calculate magnitude here?
+        if(constructor.startsWith("|") && constructor.endsWith("|")) { // todo: |<variablename>| must be recognized
             valid_object = constructVector(constructor.substring(1, constructor.length() - 1));
             if(valid_object)
                 object = ((Vector3D) object).getMagnitude();
@@ -108,6 +108,8 @@ public class GeometryObject {
             return Double.toString((double) object);
         } else if (object_class.equals(Boolean.class)) {
             return Boolean.toString((boolean) object); // todo: Boolean Class (?)
+        } else if(object_class.equals(Matrix.class)) {
+            return ((Matrix) object).getName();
         }
         return ""; // todo: better way?
     }
@@ -126,6 +128,8 @@ public class GeometryObject {
             ((Plane3D) object).setName(new_name);
         } else if(object_class.equals(Line3D.class)) {
             ((Line3D) object).setName(new_name);
+        } else if(object_class.equals(Matrix.class)) {
+            ((Matrix) object).setName(new_name);
         }
     }
     /* returns String representation of object */

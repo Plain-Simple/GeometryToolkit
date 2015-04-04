@@ -60,4 +60,8 @@ public class RowVector {
             result.set(size() + i, r.get(i));
         return result;
     }
+    /* returns a String representation of row */
+    public String getString() {
+        return elements.toString();
+    }
 }
