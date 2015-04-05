@@ -133,18 +133,18 @@ public class GeometryObject {
         }
     }
     /* returns String representation of object */
-    public String getString() {
+    @Override public String toString() {
         Class object_class = object.getClass();
         if(object_class.equals(Vector3D.class)) {
-            return ((Vector3D) object).getComponentForm();
+            return ((Vector3D) object).toString();
         } else if(object_class.equals(Vector2D.class)) {
-            return ((Vector2D) object).getComponentForm();
+            return ((Vector2D) object).toString();
         } else if(object_class.equals(Point3D.class)) {
-            return ((Point3D) object).getCoordinates();
+            return ((Point3D) object).toString();
         } else if(object_class.equals(Point2D.class)) {
-            return ((Point2D) object).getCoordinates();
+            return ((Point2D) object).toString();
         } else if(object_class.equals(Plane3D.class)) {
-            return ((Plane3D) object).getCartesianEquation();
+            return ((Plane3D) object).toString();
         } else if(object_class.equals(Line3D.class)) {
             return ((Line3D) object).getEquation();
         } else if(object_class.equals(Double.class)) {

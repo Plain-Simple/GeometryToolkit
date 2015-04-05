@@ -178,7 +178,7 @@ public class Matrix {
         return result;
     }
     /* returns String representation of matrix */
-    public String getString() { // todo: ensure even columns (padding)
+    @Override public String toString() { // todo: ensure even columns (padding)
         String result = "";
         for(int i = 0; i < rows(); i++) {
             result += "[";

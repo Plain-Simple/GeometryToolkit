@@ -61,7 +61,7 @@ public class RowVector {
         return result;
     }
     /* returns a String representation of row */
-    public String getString() {
+    @Override public String toString() {
         return elements.toString();
     }
 }

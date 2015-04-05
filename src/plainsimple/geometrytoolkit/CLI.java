@@ -15,7 +15,7 @@ class CLI {
     private static final Help help = new Help();
   /* regex pattern used to parse user input */
   private final Pattern user_command_pattern =
-    Pattern.compile("([^\\s\\^\\*/\\!\\%\\+\\-[->][==]]+)|([\\^\\*/\\!\\%\\+\\-[->][==]])");
+    Pattern.compile("([^\\s\\^\\*/!%\\+\\-[->][==]]+)|([\\^\\*/!%\\+\\-[->][==]])");
 
   public void startCLI() {
       user_objects.loadObjects("GeometryToolkit_SavedObjects");
@@ -37,7 +37,7 @@ class CLI {
   }
   private void processInput(String user_input) {
     System.out.print(">> ");
-    ArrayList<String> arguments = parseInput(user_input);
+    ArrayList<String> arguments = parseInput(user_input); // use hash = hash * 13 + (dept == null ? 0 : dept.hashCode());
     switch (arguments.get(0)) {
     case "help":
     case "Help":
@@ -115,11 +115,11 @@ class CLI {
           } else if(object_class.equals(Double.class)) {
               output = referenced_object;
           } else if(object_class.equals(GeometryObject.class)) {
-              output = ((GeometryObject) referenced_object).getString();
+              output = ((GeometryObject) referenced_object).toString();
           }
         } catch(IllegalArgumentException e) {
         }
-        Println((new GeometryObject(output)).getString());
+        Println((new GeometryObject(output)).toString());
       } catch (NullPointerException e) { /* arguments.get(0) not a valid object */
         Println(msg.var_does_not_exist(arguments.get(0)));
       }
@@ -145,61 +145,35 @@ class CLI {
     /* if constructor == true, need to pass a Vector3D object. Otherwise pass String */
     // todo: try-catch IllegalArgumentException. Allow constructor Point3D->Point3D. Implement remaining functions
       Vector3D vector_1 = (Vector3D) vector_3d;
-    if(1 == args.size()) { /* syntax is <Objectname> */
-        try {
-          Vector3D vector_2 = (Vector3D) user_objects.get(args.get(0));
-          return vector_2;
-        } catch(NullPointerException e) {
-          /* return Error: "args.get(0)" is not defined */
-          return msg.var_does_not_exist(args.get(0));
-        } catch(IllegalArgumentException e) {
-          return getTypeError(args.get(0), new String[] {msg.vector() + msg.three_d()});
-        }
-    }
+    if(1 == args.size()) /* syntax is <Objectname> */
+          return user_objects.get(args.get(0));
     if(3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
       String operator = args.get(1);
-      Vector3D vector_2 = new Vector3D();
-      Double d = new Double(0.0);
-      switch(operator) { /* all these operations require a second Vector3D */
-      case "+":
-      case "-":
-      case "x":
-      case "//":
-      case "|_":
-      case "==":
-        vector_2 = (Vector3D) user_objects.get(args.get(2));
-        break;
-      case "/":
-        d = Double.parseDouble(args.get(2));
-        break; // return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
-      default: // todo: error message: invalid operator
-
-      }
+      Object object_2 = user_objects.get(args.get(2));
       switch (operator) {
       case "+": /* vector addition */
-        return vector_1.addVector(vector_2);
+        return vector_1.add(object_2);
       case "-": /* vector subtraction */
-        return vector_1.addVector(vector_2.multiplyScalar(-1));
+        return vector_1.subtract(object_2);
       case "*":
-        Object object_2 = user_objects.get(args.get(2));
         if(object_2.getClass().equals(Vector3D.class)) { /* vector dot product */
-          return vector_1.dot((Vector3D) object_2);
+          return vector_1.dot(object_2);
         } else if(object_2.getClass().equals(Double.class) || object_2.getClass().equals(double.class)) { /* scalar multiplication */
-          return vector_1.multiplyScalar((double) object_2);
+          return vector_1.multiply(object_2);
         } else {
           return getTypeError(args.get(2), new String[]{msg.type_double(),
                   msg.type_int(), msg.vector() + msg.three_d()});
         }
       case "x":
-        return vector_1.cross(vector_2);
+        return vector_1.cross(object_2);
       case "/": /* scalar division */
-          return vector_1.multiplyScalar(1 / d);
+          return vector_1.divide(Double.parseDouble(args.get(2)));
       case "//": /* are vectors parallel */
-        return  vector_1.isParallel(vector_2);
+        return  vector_1.isParallel(object_2);
       case "|_": /* are vectors perpendicular */
-        return vector_1.isPerpendicular(vector_2);
+        return vector_1.isPerpendicular(object_2);
       case "==": /* are vectors equal */
-        return vector_1.vectorEquals(vector_2);
+        return vector_1.equals(object_2);
       case "->": /* constructor from vector to vector or vector to point */
           object_2 = user_objects.get(args.get(2));
           if(object_2.getClass().equals(Vector3D.class)) {
@@ -229,6 +203,7 @@ class CLI {
         }
         if(3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
             String operator = args.get(1);
+            Object object_2 = user_objects.get(args.get(2));
             Vector2D vector_2 = new Vector2D();
             Double d = new Double(0.0);
             switch(operator) { /* all these operations require a second Vector3D */
@@ -236,8 +211,7 @@ class CLI {
                 case "-":
                 case "//":
                 case "|_":
-                case "==":
-                    vector_2 = (Vector2D) user_objects.get(args.get(2));
+                    vector_2 = (Vector2D) object_2;
                     break;
                 case "/":
                     d = Double.parseDouble(args.get(2));
@@ -251,7 +225,6 @@ class CLI {
                 case "-": /* vector subtraction */
                     return vector_1.addVector(vector_2.multiplyScalar(-1));
                 case "*":
-                    Object object_2 = user_objects.get(args.get(2));
                     if (object_2.getClass().equals(Vector2D.class)) { /* vector dot product */
                         return vector_1.dot((Vector2D) object_2);
                     } else if (object_2.getClass().equals(Double.class)) { /* scalar multiplication */
@@ -262,13 +235,13 @@ class CLI {
                         });
                     }
                 case "/": /* scalar division */
-                    return vector_1.multiplyScalar(1 / d);
+                    return vector_1.divideScalar(d);
                 case "//": /* are vectors parallel */
                     return vector_1.isParallel(vector_2);
                 case "|_": /* are vectors perpendicular */
                     return vector_1.isPerpendicular(vector_2);
                 case "==": /* are vectors equal */
-                    return vector_1.vectorEquals(vector_2);
+                    return vector_1.equals(object_2);
                 case "->":
                     object_2 = user_objects.get(args.get(2));
                     if(object_2.getClass().equals(Vector2D.class)) {
@@ -405,7 +378,7 @@ class CLI {
               Println("All entries must be numbers!");
               Println(e.getMessage());
           }
-          Println(new_matrix.getString());
+          Println(new_matrix.toString());
       }
   }
   private void Println(String s) {

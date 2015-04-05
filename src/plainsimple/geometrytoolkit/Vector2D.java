@@ -39,7 +39,7 @@ public class Vector2D {
     return name;
   }
   /* returns String representation of the vector */
-  public String getComponentForm() {
+  @Override public String toString() {
     return "<" + x + ", " + y + ">";
   }
   /* returns x value of vector */
@@ -59,13 +59,15 @@ public class Vector2D {
     return new LineSegment2D(this_vector).getMidpoint();
   }
   /* multiplies vector by scalar */
-  public Vector2D multiplyScalar(double scalar) {
-    return new Vector2D(scalar * x, scalar * y);
-  }
+  public Vector2D multiplyScalar(double scalar) { return new Vector2D(scalar * x, scalar * y); }
+  /* divides vector by scalar */
+  public Vector2D divideScalar(double scalar) { return new Vector2D(scalar / x, scalar / y); }
   /* adds vectors */
   public Vector2D addVector(Vector2D vector_2) {
     return new Vector2D(x + vector_2.x(), y + vector_2.y());
   }
+  /* subtracts vectors */
+  public Vector2D subtractVector(Vector2D vector_2) { return new Vector2D(x - vector_2.x(), y - vector_2.y()); }
   /* returns dot product of vector and vector_2 */
   public double dot(Vector2D vector_2) {
     return (x * vector_2.x()) + (y * vector_2.y());
@@ -97,7 +99,16 @@ public class Vector2D {
     return (0 == dot(vector_2));
   }
   /* returns whether this vector is equal */
-  public boolean vectorEquals(Vector2D vector_2) {
-    return (x == vector_2.x()) && (y == vector_2.y());
+  @Override public boolean equals(Object o) {
+      if (o == null)
+          return false;
+      else if (o == this)
+          return true;
+      else if (o.getClass() != Vector2D.class)
+          return false;
+      else {
+          Vector2D v = (Vector2D) o;
+          return ((x == v.x()) && (y == v.y()));
+      }
   }
 }

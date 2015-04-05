@@ -1,13 +1,13 @@
 package plainsimple.geometrytoolkit;
 
 public class LineSegment3D {
-  double x1;
-  double y1;
-  double z1;
-  double x2;
-  double y2;
-  double z2;
-  String name;
+  private double x1;
+  private double y1;
+  private double z1;
+  private double x2;
+  private double y2;
+  private double z2;
+  private String name;
   /* initializes line segment using two points */
   public LineSegment3D(Point3D start, Point3D end) {
     x1 = start.x();
@@ -26,6 +26,12 @@ public class LineSegment3D {
     y2 = vector.y();
     z2 = vector.z();
   }
+  public double x1() { return x1; }
+  public double y1() { return y1; }
+  public double z1() { return z1; }
+  public double x2() { return x2; }
+  public double y2() { return y2; }
+  public double z2() { return z2; }
   /* returns length of segment */
   public double getLength() {
     return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)

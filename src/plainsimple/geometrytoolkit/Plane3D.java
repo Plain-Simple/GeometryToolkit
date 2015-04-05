@@ -62,7 +62,7 @@ public class Plane3D {
     return ((a * vector.x()) + (b * vector.y()) + (c * vector.z())) == d;
   }
     /* returns Cartesian equation of plane */
-    public String getCartesianEquation() { // todo: finish
+    @Override public String toString() { // todo: finish
         return "";
     }
   /* returns whether vector is parallel to plane */

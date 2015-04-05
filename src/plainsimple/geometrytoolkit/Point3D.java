@@ -32,7 +32,7 @@ public class Point3D {
     return z;
   }
   /* returns String representation of point */
-  public String getCoordinates() {
+  @Override public String toString() {
     return "(" + x + ", " + y + ", " + z + ")";
   }
   /* returns distance between points */
@@ -40,6 +40,18 @@ public class Point3D {
     return Math.sqrt(Math.pow((x - point_2.x()), 2) +
                      Math.pow((y - point_2.y()), 2) +
                      Math.pow((z - point_2.z()), 2));
+  }
+  @Override public boolean equals(Object o) {
+      if (o == null)
+          return false;
+      else if (o == this)
+          return true;
+      else if (o.getClass() != Point3D.class)
+          return false;
+      else {
+          Point3D p = (Point3D) o;
+          return ((x == p.x()) && (y == p.y()) && (z == p.z()));
+      }
   }
 }
 

@@ -66,7 +66,7 @@ public class Constructor {
                 }
                 GeometryObject this_object = new GeometryObject(constructed_object);
                 this_object.setName(name);
-                message = (name + msg.arrow() + this_object.getString());
+                message = (name + msg.arrow() + this_object.toString());
                 return true;
             } catch (NullPointerException e) { // todo: error messages
                 message = (msg.error_creating_object() + msg.double_quote() + name
