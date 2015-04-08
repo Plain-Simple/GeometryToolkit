@@ -165,10 +165,10 @@ public class Vector3D {
         }
     } else if(object.getClass() == Line3D.class) {
         Line3D line = (Line3D) object;
-        return (line.getDirectionVector().equals(new Vector3D(x, y, z)));
+        return (line.getDirectionVector().equals(this));
     } else if(object.getClass() == Plane3D.class) {
         Plane3D plane = (Plane3D) object;
-        return (new Vector3D(plane.a(), plane.b(), plane.c()).isPerpendicular(new Vector3D(x, y, z)));
+        return (new Vector3D(plane.a(), plane.b(), plane.c()).isPerpendicular(this));
     } else if(object.getClass() == LineSegment3D.class) {
         LineSegment3D ls = (LineSegment3D) object;
         return isParallel(new Vector3D(ls.x2() - ls.x1(), ls.y2() - ls.y1(), ls.z2() - ls.z1()));
@@ -183,7 +183,7 @@ public class Vector3D {
         return isPerpendicular(((Line3D) object).getDirectionVector());
     else if(object.getClass() == Plane3D.class) {
         Plane3D plane = (Plane3D) object;
-        return (new Vector3D(plane.a(), plane.b(), plane.c()).isParallel(new Vector3D(x, y, z)));
+        return (new Vector3D(plane.a(), plane.b(), plane.c()).isParallel(this));
     } else if(object.getClass() == LineSegment3D.class) {
         LineSegment3D ls = (LineSegment3D) object;
         return isPerpendicular(new Vector3D(ls.x2() - ls.x1(), ls.y2() - ls.y1(), ls.z2() - ls.z1()));

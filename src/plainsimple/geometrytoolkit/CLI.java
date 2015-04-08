@@ -223,7 +223,7 @@ class CLI {
                 case "+": /* vector addition */
                     return vector_1.addVector(vector_2);
                 case "-": /* vector subtraction */
-                    return vector_1.addVector(vector_2.multiplyScalar(-1));
+                    return vector_1.subtractVector(vector_2);
                 case "*":
                     if (object_2.getClass().equals(Vector2D.class)) { /* vector dot product */
                         return vector_1.dot((Vector2D) object_2);

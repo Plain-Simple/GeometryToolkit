@@ -65,35 +65,34 @@ public class Plane3D {
     @Override public String toString() { // todo: finish
         return "";
     }
-  /* returns whether vector is parallel to plane */
-  public boolean isParallel(Vector3D vector) {
-    Vector3D plane_as_vector = new Vector3D(a, b, c);
-    return plane_as_vector.isPerpendicular(vector);
+  /* returns whether vector is parallel to object */
+  public boolean isParallel(Object object) {  // todo: merge into one class
+    if(object.getClass() == Vector3D.class) {
+        Vector3D plane_as_vector = new Vector3D(a, b, c);
+        return plane_as_vector.isPerpendicular(object);
+    } else
+        return false;
   }
   /* returns whether vector is perpendicular to plane */
-  public boolean isPerpendicual(Vector3D vector) {
+  public boolean isPerpendicular(Vector3D vector) {
     Vector3D plane_as_vector = new Vector3D(a, b, c);
     return plane_as_vector.isParallel(vector);
   }
   /* returns whether plane is parallel to plane_2 */
   public boolean isParallel(Plane3D plane_2) {
-    Plane3D this_plane = new Plane3D(a, b, c, d);
-    return (new Vector3D(this_plane).isParallel(new Vector3D(plane_2)));
+    return (new Vector3D(this).isParallel(new Vector3D(plane_2)));
   }
   /* returns whether plane is perpendicular to plane_2 */
   public boolean isPerpendicular(Plane3D plane_2) {
-    Plane3D this_plane = new Plane3D(a, b, c, d);
-    return (new Vector3D(this_plane).isPerpendicular(new Vector3D(plane_2)));
+    return (new Vector3D(this).isPerpendicular(new Vector3D(plane_2)));
   }
     /* returns whether plane is perpendicular to line */
     public boolean isPerpendicular(Line3D line) {
-        Plane3D this_plane = new Plane3D(a,b,c,d);
         /* perpendicular if it is parallel to a vector perpendicular to the plane */
         return (line.getDirectionVector().isParallel(new Vector3D(a,b,c)));
     }
     /* returns whether plane is parallel to line */
     public boolean isParallel(Line3D line) {
-        Plane3D this_plane = new Plane3D(a,b,c,d);
         /* parallel if it is perpendicular to a vector perpendicular to the plane */
         return(line.getDirectionVector().isPerpendicular(new Vector3D(a,b,c)));
     }
@@ -104,13 +103,12 @@ public class Plane3D {
   /* returns a Point3D that would be found on the plane */
   public Point3D getPointOnPlane() { //TODO: explain purpose of this
     /* fulfill condition that ax + by + cz = d */
-    return new Point3D(0.0, 0.0, d);
+    return new Point3D(0.0, 0.0, d / c);
   }
   /* returns distance from point to plane */
   public double distanceToPoint(Point3D point) {
-    Plane3D this_plane = new Plane3D(a, b, c, d);
     /* create vector perpendicular to plane */
-    Vector3D reference_vector = new Vector3D(this_plane);
+    Vector3D reference_vector = new Vector3D(this);
     /* get reference point on plane */
     Point3D reference_point = getPointOnPlane();
     /* construct diagonal from reference point to point */
@@ -122,13 +120,12 @@ public class Plane3D {
   }
   /* returns distance from plane to plane_2 */
   public double distanceToPlane(Plane3D plane_2) {
-    Plane3D this_plane = new Plane3D(a, b, c, d);
-    if(this_plane.isParallel(plane_2)) {
+    if(this.isParallel(plane_2)) {
         /* construct line intersecting both planes, which are parallel */
-        Line3D intersecting_line = new Line3D(this_plane);
+        Line3D intersecting_line = new Line3D(this);
         /* distance from point where line intersects this_plane to where line intersects
         plane_2 */
-        return intersecting_line.getPlaneIntersection(this_plane)
+        return intersecting_line.getPlaneIntersection(this)
                 .getDistance(intersecting_line.getPlaneIntersection(plane_2));
     }
     else { /* planes aren't parallel - they intersect */
@@ -136,17 +133,15 @@ public class Plane3D {
     }
   }
   public double distanceToLine(Line3D line) { // todo: finish. will need better Line3D class
-      Plane3D this_plane = new Plane3D(a, b, c, d);
-      if(this_plane.isParallel(line)) {
+      if(this.isParallel(line)) {
         return 0.0;
       } else
         return 0.0;
   }
   /* returns angle between plane and plane_2 */
   public double angleBetweenPlanes(Plane3D plane_2) {
-    Plane3D this_plane = new Plane3D(a, b, c, d);
     /* constructs a vector perpendicular to each plane and measures angle
     between them */
-    return new Vector3D(this_plane).getAngle(new Vector3D(plane_2));
+    return new Vector3D(this).getAngle(new Vector3D(plane_2));
   }
 }

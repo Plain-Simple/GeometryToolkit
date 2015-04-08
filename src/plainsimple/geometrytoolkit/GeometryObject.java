@@ -133,7 +133,7 @@ public class GeometryObject {
         }
     }
     /* returns String representation of object */
-    @Override public String toString() {
+    @Override public String toString() { // todo: once all classes have had toString overwritten this will no longer be necessary
         Class object_class = object.getClass();
         if(object_class.equals(Vector3D.class)) {
             return ((Vector3D) object).toString();
