@@ -83,7 +83,7 @@ public class QuadraticEquation {
         return result;
     }
     /* returns factored form as a String */
-    private String getFactoredForm() { // todo: finish
+    private String getFactoredForm() { 
         String result = "";
         ArrayList<ComplexNumber> solutions = solve();
         if(a != 1)

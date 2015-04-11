@@ -46,6 +46,8 @@ public class StoredObjects { // todo: constructor that takes filename?
     }
     /* returns String listing all objects of object_type */
     public String list(String object_type) {
+        if(object_type.equals("all")) /* command is "list all" */
+            return list();
         String result = "";
         if(user_objects.isEmpty())
             return msg.no_objects();
@@ -101,6 +103,8 @@ public class StoredObjects { // todo: constructor that takes filename?
     /* removes specified object from list */
     public String remove(String object_name) {
         try {
+            if(object_name.equals("all"))
+                return clear();
             user_objects.remove(object_name);
             return msg.remove_success(object_name);
         }catch(NullPointerException e) { /* object_name = null */

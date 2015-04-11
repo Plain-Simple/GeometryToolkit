@@ -10,12 +10,6 @@ public interface Messages {
   @En("\nWaiting on command...")
   String command_waiting();
 
-  @En("Vector ")
-  String vector();
-
-    @En("Point ")
-    String point();
-
   @En(" created")
   String created();
 
@@ -93,12 +87,6 @@ public interface Messages {
 
   @En(" int")
   String type_int();
-
-  @En("3D")
-  String three_d();
-
-  @En("2D")
-  String two_d();
 
   @En(" or ")
   String or ();
@@ -245,4 +233,22 @@ public interface Messages {
 
     @En("Complex Number")
     String complex_num();
+
+    @En("Vector2D")
+    String vector_2d();
+
+    @En("Vector3D")
+    String vector_3d();
+
+    @En("Point2D")
+    String point_2d();
+
+    @En("Point3D")
+    String point_3d();
+
+    @En("3D")
+    String three_d();
+
+    @En("2D")
+    String two_d();
 }

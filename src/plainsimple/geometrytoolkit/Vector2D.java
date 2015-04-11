@@ -1,9 +1,13 @@
 package plainsimple.geometrytoolkit;
 
+import c10n.C10N;
+
 public class Vector2D {
   private double x;
   private double y;
   private String name;
+  /* used to access C10N messages */
+  private static final Messages msg = C10N.get(Messages.class);
   /* simplest constructor, sets all values to zero */
   public Vector2D() {
     x = 0.0;
@@ -59,18 +63,44 @@ public class Vector2D {
     return new LineSegment2D(this_vector).getMidpoint();
   }
   /* multiplies vector by scalar */
-  public Vector2D multiplyScalar(double scalar) { return new Vector2D(scalar * x, scalar * y); }
+  public Vector2D multiply(Object multiplier) throws NumberFormatException {
+      if(multiplier.getClass() == double.class) {
+          double scalar = (double) multiplier;
+          return new Vector2D(scalar * x, scalar * y);
+      } else
+          throw new NumberFormatException(msg.type_error(msg.multiply_sign(), msg.type_double()));
+  }
   /* divides vector by scalar */
-  public Vector2D divideScalar(double scalar) { return new Vector2D(scalar / x, scalar / y); }
+  public Vector2D divide(Object divisor) throws NumberFormatException {
+      if (divisor.getClass() == double.class) {
+          double scalar = (double) divisor;
+          return new Vector2D(scalar / x, scalar / y);
+      } else
+          throw new NumberFormatException(msg.type_error(msg.divide_sign(), msg.type_double()));
+  }
   /* adds vectors */
-  public Vector2D addVector(Vector2D vector_2) {
-    return new Vector2D(x + vector_2.x(), y + vector_2.y());
+  public Vector2D add(Object addend) throws NumberFormatException {
+    if(addend.getClass() == Vector2D.class) {
+        Vector3D v = (Vector3D) addend;
+        return new Vector2D(x + v.x(), y + v.y());
+    } else
+        throw new NumberFormatException(msg.type_error(msg.plus_sign(), msg.vector_2d()));
   }
   /* subtracts vectors */
-  public Vector2D subtractVector(Vector2D vector_2) { return new Vector2D(x - vector_2.x(), y - vector_2.y()); }
+  public Vector2D subtract(Object minuend) throws NumberFormatException {
+      if(minuend.getClass() == Vector2D.class) {
+          Vector3D v = (Vector3D) minuend;
+          return new Vector2D(x - v.x(), y - v.y());
+      } else
+          throw new NumberFormatException(msg.type_error(msg.minus_sign(), msg.vector_2d()));
+  }
   /* returns dot product of vector and vector_2 */
-  public double dot(Vector2D vector_2) {
-    return (x * vector_2.x()) + (y * vector_2.y());
+  public double dot(Object multiplier) throws NumberFormatException {
+    if(multiplier.getClass() == Vector2D.class) {
+        Vector2D v = (Vector2D) multiplier;
+        return (x * v.x()) + (y * v.y());
+    } else
+        throw new NumberFormatException(msg.type_error(msg.multiply_sign(), msg.vector_2d()));
   }
   /* returns magnitude of vector */
   public double getMagnitude() {
@@ -78,25 +108,33 @@ public class Vector2D {
     return Math.sqrt(this_vector.dot(this_vector));
   }
   /* returns angle between two vectors */
-  public double getAngle(Vector2D vector_2) {
-    // ToDo: angle class?? Also make sure vectors are tail-to-tail
+  public double getAngle(Vector2D vector_2) { // todo: should be compatible with all 2d geometry objects
+    // ToDo: angle class??
     double  numerator = dot(vector_2);
     double denominator = getMagnitude() * vector_2.getMagnitude();
     return Math.acos(numerator / denominator);
   }
   /* returns whether this vector is parallel */
-  public boolean isParallel(Vector2D
-                            vector_2) { // todo: figure out what to do when dividing by zero
-    try {
-      return (x / vector_2.x()) == (y / vector_2.y());
-    } catch(Exception e) {
-      System.out.println("Division by zero in Vector2D.isParallel");
-      return false; /* is it always false? We need to figure out what to do in this case */
+  public boolean isParallel(Object object_2d) throws NumberFormatException { // todo: figure out what to do when dividing by zero
+    if(object_2d.getClass() == Vector2D.class) {
+        Vector2D vector_2 = (Vector2D) object_2d;
+        if ((vector_2.x() == 0 && vector_2.y() == 0) || (x == 0 && y == 0))
+            return true;
+        try {
+            double factor = x / vector_2.x();
+            return (((y / vector_2.y()) == factor));
+        } catch (Exception e) {
+            return false;
+        }
     }
+    else return false;
   }
   /* returns whether this vector is perpendicular */
-  public boolean isPerpendicular(Vector2D vector_2) {
-    return (0 == dot(vector_2));
+  public boolean isPerpendicular(Object object_2d) throws NumberFormatException {
+    if(object_2d.getClass() == Vector2D.class) {
+        Vector2D v = (Vector2D) object_2d;
+        return (0 == dot(v));
+    } else return false;
   }
   /* returns whether this vector is equal */
   @Override public boolean equals(Object o) {

@@ -18,75 +18,77 @@ class CLI {
     Pattern.compile("([^\\s\\^\\*/!%\\+\\-[->][==]]+)|([\\^\\*/!%\\+\\-[->][==]])");
 
   public void startCLI() {
-      user_objects.loadObjects("GeometryToolkit_SavedObjects");
-      Println(msg.program_full_name());
+    user_objects.loadObjects("GeometryToolkit_SavedObjects");
+    Println(msg.program_full_name());
     String user_input;
     do {
       Println(msg.command_waiting());
       user_input = getInput();
-      if(user_input.isEmpty()) {
-        Println(msg.no_input());
-      } else {
-        processInput(user_input);
-      }
+      processInput(user_input);
     } while (!user_input.equals("exit"));
   }
   private String getInput() {
     final Scanner scanner = new Scanner(System.in);
     return scanner.nextLine();
   }
-  private void processInput(String user_input) {
+    private void processInput(String user_input) {
     System.out.print(">> ");
-    ArrayList<String> arguments = parseInput(user_input); // use hash = hash * 13 + (dept == null ? 0 : dept.hashCode());
-    switch (arguments.get(0)) {
-    case "help":
-    case "Help":
-      Println(help.handleHelp(arguments));
-      break;
-    case "list":
-    case "List":
-        if(1 == arguments.size()) /* list all objects */
-            Println(user_objects.list());
-        else if(2 == arguments.size()) /* list objects of specified type */
-            Println(user_objects.list(arguments.get(1)));
-        else /* too many args */
-            Println(msg.max_parameter_error("list", 2));
-      break;
-    case "remove":
-    case "Remove":
-        if(1 == arguments.size()) { /* remove all objects */
-            Println(user_objects.clear());
-            user_objects.writeObjects("GeometryToolkit_SavedObjects");
-        } else if(2 == arguments.size()) { /* remove specified object */
-            Println(user_objects.remove(arguments.get(1)));
-        } else /* too many args */
-            Println(msg.max_parameter_error("remove", 2)); // todo: messages
-        break;
-    case "rename":
-    case "Rename":
-        if(3 == arguments.size()) {
-            Println(user_objects.rename(arguments.get(1), arguments.get(2)));
-        } else if(arguments.size() > 3) {
-            Println(msg.max_parameter_error("rename", 3));
-        } else {
-            Println(msg.min_parameter_error("rename", 3));
+    ArrayList<String> arguments = parseInput(user_input);
+    if(arguments.isEmpty())
+        Println(msg.no_input());
+    else {
+        switch (arguments.get(0)) {
+            case "help":
+            case "Help":
+                Println(help.handleHelp(arguments));
+                break;
+            case "list":
+            case "List":
+                if (1 == arguments.size()) /* list all objects */
+                    Println(user_objects.list());
+                else if (2 == arguments.size()) /* list objects of specified type */
+                    Println(user_objects.list(arguments.get(1)));
+                else /* too many args */
+                    Println(msg.max_parameter_error("list", 2));
+                break;
+            case "remove":
+            case "Remove":
+                if (1 == arguments.size()) { /* remove all objects */
+                    Println(user_objects.clear());
+                    user_objects.writeObjects("GeometryToolkit_SavedObjects");
+                } else if (2 == arguments.size()) { /* remove specified object */
+                    Println(user_objects.remove(arguments.get(1)));
+                    user_objects.writeObjects("GeometryToolkit_SavedObjects");
+                } else /* too many args */
+                    Println(msg.max_parameter_error("remove", 2)); // todo: messages
+                break;
+            case "rename":
+            case "Rename":
+                if (3 == arguments.size()) {
+                    Println(user_objects.rename(arguments.get(1), arguments.get(2)));
+                    user_objects.writeObjects("GeometryToolkit_SavedObjects");
+                } else if (arguments.size() > 3) {
+                    Println(msg.max_parameter_error("rename", 3));
+                } else {
+                    Println(msg.min_parameter_error("rename", 3));
+                }
+                break;
+            case "New":
+            case "new":
+                if (2 == arguments.size()) {
+                    switch (arguments.get(1)) {
+                        case "Matrix":
+                            MatrixConstructor();
+                    }
+                } else if (arguments.size() > 2) {
+                    Println(msg.max_parameter_error("new", 2));
+                } else {
+                    Println(msg.min_parameter_error("new", 2));
+                }
+                break;
+            default:
+                loadObject(arguments);
         }
-        break;
-    case "New":
-    case "new":
-        if(2 == arguments.size()) {
-            switch(arguments.get(1)) {
-                case "Matrix":
-                    MatrixConstructor();
-            }
-        } else if(arguments.size() > 2) {
-            Println(msg.max_parameter_error("new", 2));
-        } else {
-            Println(msg.min_parameter_error("new", 2));
-        }
-    break;
-    default:
-      loadObject(arguments);
     }
   }
   private void loadObject(ArrayList<String> arguments) {
@@ -115,13 +117,14 @@ class CLI {
           } else if(object_class.equals(Double.class)) {
               output = referenced_object;
           } else if(object_class.equals(GeometryObject.class)) {
-              output = ((GeometryObject) referenced_object).toString();
+              output = referenced_object.toString();
           }
-        } catch(IllegalArgumentException e) {
+        } catch(NumberFormatException e) {
+            Println(e.getMessage());
         }
-        Println((new GeometryObject(output)).toString());
+        Println(new GeometryObject(output).toString());
       } catch (NullPointerException e) { /* arguments.get(0) not a valid object */
-        Println(msg.var_does_not_exist(arguments.get(0)));
+            Println(msg.var_does_not_exist(arguments.get(0)));
       }
     }
   }
@@ -162,7 +165,7 @@ class CLI {
           return vector_1.multiply(object_2);
         } else {
           return getTypeError(args.get(2), new String[]{msg.type_double(),
-                  msg.type_int(), msg.vector() + msg.three_d()});
+                  msg.type_int(), msg.vector_3d()});
         }
       case "x":
         return vector_1.cross(object_2);
@@ -191,59 +194,43 @@ class CLI {
     /* if constructor == true, need to pass a Vector2D object. Otherwise pass String */
         Vector2D vector_1 = (Vector2D) vector_2d;
         if(1 == args.size()) { /* syntax is <Objectname> */
-                try {
-                    Vector2D vector_2 = (Vector2D) user_objects.get(args.get(0));
-                    return vector_2;
-                } catch(NullPointerException e) {
+            try {
+                Vector2D vector_2 = (Vector2D) user_objects.get(args.get(0));
+                return vector_2;
+            } catch(NullPointerException e) {
           /* return Error: "args.get(0)" is not defined */
-                    return msg.var_does_not_exist(args.get(0));
-                } catch(IllegalArgumentException e) {
-                    return getTypeError(args.get(0), new String[] {msg.vector() + msg.two_d()});
-                }
+                return msg.var_does_not_exist(args.get(0));
+            } catch(IllegalArgumentException e) {
+                return getTypeError(args.get(0), new String[] {msg.vector_2d()});
+            }
         }
         if(3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
             String operator = args.get(1);
             Object object_2 = user_objects.get(args.get(2));
-            Vector2D vector_2 = new Vector2D();
-            Double d = new Double(0.0);
-            switch(operator) { /* all these operations require a second Vector3D */
-                case "+":
-                case "-":
-                case "//":
-                case "|_":
-                    vector_2 = (Vector2D) object_2;
-                    break;
-                case "/":
-                    d = Double.parseDouble(args.get(2));
-                    break; // return getTypeError(args.get(2), new String[] {msg.type_double(), msg.type_int()});
-                default: // todo: error message: invalid operator
-
-            }
             switch (operator) {
                 case "+": /* vector addition */
-                    return vector_1.addVector(vector_2);
+                    return vector_1.add(object_2);
                 case "-": /* vector subtraction */
-                    return vector_1.subtractVector(vector_2);
+                    return vector_1.subtract(object_2);
                 case "*":
                     if (object_2.getClass().equals(Vector2D.class)) { /* vector dot product */
-                        return vector_1.dot((Vector2D) object_2);
+                        return vector_1.dot(object_2);
                     } else if (object_2.getClass().equals(Double.class)) { /* scalar multiplication */
-                        return vector_1.multiplyScalar((double) object_2);
+                        return vector_1.multiply(object_2);
                     } else {
                         return getTypeError(args.get(2), new String[]{msg.type_double(),
-                                msg.type_int(), msg.vector() + msg.three_d()
+                                msg.type_int(), msg.vector_3d()
                         });
                     }
                 case "/": /* scalar division */
-                    return vector_1.divideScalar(d);
+                    return vector_1.divide(object_2);
                 case "//": /* are vectors parallel */
-                    return vector_1.isParallel(vector_2);
+                    return vector_1.isParallel(object_2);
                 case "|_": /* are vectors perpendicular */
-                    return vector_1.isPerpendicular(vector_2);
+                    return vector_1.isPerpendicular(object_2);
                 case "==": /* are vectors equal */
                     return vector_1.equals(object_2);
                 case "->":
-                    object_2 = user_objects.get(args.get(2));
                     if(object_2.getClass().equals(Vector2D.class)) {
                         return new Vector2D(vector_1, (Vector2D) object_2);
                     } else if(object_2.getClass().equals(Point2D.class)) {
@@ -265,25 +252,18 @@ class CLI {
           /* return Error: "args.get(0)" is not defined */
                     return msg.var_does_not_exist(args.get(0));
                 } catch (IllegalArgumentException e) {
-                    return getTypeError(args.get(0), new String[]{msg.point() + msg.three_d()});
+                    return getTypeError(args.get(0), new String[]{msg.point_3d()});
                 }
         }
         if (3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
             String operator = args.get(1);
-            Point3D point_2 = new Point3D();
-            switch (operator) { /* all these operations require a second Vector3D */
-                case "-":
-                case "==":
-                    point_2 = (Point3D) user_objects.get(args.get(2));
-                    break;
-            }
+            Object object_2 = user_objects.get(args.get(2));
             switch (operator) {
                 case "-":
-                    return point_1.getDistance(point_2);
+                    return point_1.getDistance(object_2);
                 case "==":
-                    return point_1.equals(point_2);
+                    return point_1.equals(object_2);
                 case "->":
-                    Object object_2 = user_objects.get(args.get(2));
                     if(object_2.getClass().equals(Vector3D.class)) {
                         return new Vector3D((Vector3D) object_2, point_1);
                     } else if(object_2.getClass().equals(Point3D.class)) {
@@ -306,25 +286,18 @@ class CLI {
           /* return Error: "args.get(0)" is not defined */
                     return msg.var_does_not_exist(args.get(0));
                 } catch (IllegalArgumentException e) {
-                    return getTypeError(args.get(0), new String[]{msg.point() + msg.two_d()});
+                    return getTypeError(args.get(0), new String[]{msg.point_2d()});
                 }
         }
         if (3 == args.size()) { /* syntax is <Objectname> <operator> <Objectname> */
             String operator = args.get(1);
-            Point2D point_2 = new Point2D();
-            switch (operator) { /* all these operations require a second Vector3D */
-                case "-":
-                case "==":
-                    point_2 = (Point2D) user_objects.get(args.get(2));
-                    break;
-            }
+            Object object_2 = user_objects.get(args.get(2));
             switch (operator) {
                 case "-":
-                    return point_1.getDistance(point_2);
+                    return point_1.getDistance(object_2);
                 case "==":
-                    return point_1.equals(point_2);
+                    return point_1.equals(object_2);
                 case "->":
-                    Object object_2 = user_objects.get(args.get(2));
                     if(object_2.getClass().equals(Vector2D.class)) {
                         return new Vector2D((Vector2D) object_2, point_1);
                     } //else if(object_2.getClass().equals(Point2D.class)) {

@@ -1,13 +1,17 @@
 package plainsimple.geometrytoolkit;
 
+import c10n.C10N;
+
 public class Point2D {
   private double x;
   private double y;
   private String name;
-    public Point2D() {
-        x = 0.0;
-        y = 0.0;
-    }
+  /* used to access C10N messages */
+  private static final Messages msg = C10N.get(Messages.class);
+  public Point2D() {
+    x = 0.0;
+    y = 0.0;
+  }
   public Point2D(double x, double y) {
     this.x = x;
     this.y = y;
@@ -27,9 +31,13 @@ public class Point2D {
     return "(" + x + ", " + y + ")";
   }
   /* returns distance between points */
-  public double getDistance(Point2D point_2) {
-    return Math.sqrt(Math.pow((x - point_2.x()), 2) +
-                     Math.pow((y - point_2.y()), 2));
+  public double getDistance(Object object_2d) throws NumberFormatException {
+    if(object_2d.getClass() == Point2D.class) {
+        Point2D p = (Point2D) object_2d;
+        return Math.sqrt(Math.pow((x - p.x()), 2) +
+                Math.pow((y - p.y()), 2));
+    } else
+        throw new NumberFormatException(msg.type_error(msg.arrow(), msg.two_d()));
   }
   @Override public boolean equals(Object o) {
       if (o == null)
