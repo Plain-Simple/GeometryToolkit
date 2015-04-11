@@ -242,4 +242,7 @@ public interface Messages {
     @En("Error: Operator \"{0}\" accepts objects of type {1}, {2}, {3}, or {4}")
     String type_error(String operator, String object_type, String object_type2,
                       String object_type3, String object_type4);
+
+    @En("Complex Number")
+    String complex_num();
 }
